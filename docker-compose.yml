@@ -1,0 +1,21 @@
+
+services:
+  db:
+    image: postgres:14.8-alpine3.18
+    container_name: postgres
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - sql
+    ports:
+      - 5432:5432
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d:z
+      - ./data:/var/lib/postgresql/data:z
+
+networks:
+  sql:
+    driver: bridge
+    name: sql
+
