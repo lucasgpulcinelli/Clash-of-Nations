@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <title>Clash of Nations</title>
+  </head>
+  <body>
+    {% if results|length == 0 %}
+    <p> no users registred!</p>
+    {% else %}
+    <ul>
+      {% for result in results %}
+      <li>{{ result[0] }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </body>
+</html>
+
