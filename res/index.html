@@ -3,15 +3,13 @@
     <title>Clash of Nations</title>
   </head>
   <body>
-    {% if results|length == 0 %}
-    <p> no users registred!</p>
-    {% else %}
+    <h1>Bem vindo a Clash of Nations - Donation Born!</h1>
+    <p>Neste mágico mundo você poderá enfrentar monstros incríveis, criar aliados poderosos, e, o mais importante de tudo, ajudar pessoas!
     <ul>
-      {% for result in results %}
-      <li>{{ result[0] }}</li>
-      {% endfor %}
+      <li><a href="/login.html">login</a></li>
+      <li><a href="/register.html">registrar-se</a></li>
+      <li><a href="/admin.html">área de admnistrador</a></li>
     </ul>
-    {% endif %}
   </body>
 </html>
 
