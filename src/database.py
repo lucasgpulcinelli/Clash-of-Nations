@@ -11,7 +11,7 @@ class ClashOfNationsDB():
     def get(self, n):
         return lambda cursor, n=n: cursor.fetchmany(n)
 
-    def query(self, query, quantityLambda=None, cursor=None):
+    def query(self, query, quantityLambda=None, variables=None, cursor=None):
         if not quantityLambda:
             quantityLambda = self.all
 
@@ -20,10 +20,27 @@ class ClashOfNationsDB():
             close = True
             cursor = self.connection.cursor()
 
-        cursor.execute(query)
+        cursor.execute(query, variables)
         result = quantityLambda(cursor)
 
         if close:
             cursor.close()
 
         return result
+
+    def insert(self, statement, variables=None, cursor=None):
+        close = False
+        if not cursor:
+            close = True
+            cursor = self.connection.cursor()
+
+        try:
+            cursor.execute(statement, variables)
+        except Exception as e:
+            if close:
+                self.connection.rollback()
+            raise e
+
+        if close:
+            self.connection.commit()
+            cursor.close()
