@@ -17,7 +17,6 @@ CREATE TABLE usuario (
   CONSTRAINT ck_usuario_nome_aconselhador CHECK (nome <> aconselhador)
 );
 
-
 CREATE TABLE Nacao (
   nome VARCHAR(32),
 
@@ -281,4 +280,14 @@ CREATE TABLE Vota_Em_Alianca(
   --CONSTRAINT CK_Vota_Em_Alianca_diplomata CHECK ('diplomata' IN (SELECT especializacao FROM Personagem P WHERE personagem=P.ID))
 );
 
+CREATE TABLE topico (
+  id SERIAL,
+  criador VARCHAR(64) NOT NULL,
+  titulo VARCHAR(128) NOT NULL,
+  data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
+  assunto TEXT,
+
+  CONSTRAINT pk_topico PRIMARY KEY (id),
+  UNIQUE(criador, data_de_criacao),
+  CONSTRAINT fk_topico_usuario FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE RESTRICT
 );
