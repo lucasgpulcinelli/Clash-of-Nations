@@ -142,6 +142,15 @@ CREATE TABLE itens_gerados_missao (
   CONSTRAINT CK_ITENS_GERADOS_QTT CHECK (quantidade >= 0)
 );
 
+CREATE TABLE comunidade_carente (
+  nome VARCHAR(64),
+  local VARCHAR(256) NOT NULL,
+  pontuação_total NUMERIC NOT NULL DEFAULT 0,
+
+  CONSTRAINT pk_comunidade_carente PRIMARY KEY (nome)
+);
+
+
 CREATE TABLE criacao_comunidade (
   missao VARCHAR(64) NOT NULL,
   comunidade VARCHAR(64) NOT NULL,
@@ -319,4 +328,25 @@ CREATE TABLE moderador_oculta_mensagem (
     FOREIGN KEY(mensagem) REFERENCES mensagem(id) ON DELETE RESTRICT,
   CONSTRAINT fk_moderador_oculta_mensagem_usuario
     FOREIGN KEY(moderador) REFERENCES usuario(nome) ON DELETE RESTRICT
+);
+
+CREATE TABLE doacao_para_comunidade (
+  usuario VARCHAR(64),
+  comunidade VARCHAR(64),
+  data DATE NOT NULL DEFAULT NOW(),
+  valor NUMERIC NOT NULL DEFAULT 0,
+
+  CONSTRAINT pk_doacao_para_comunidade PRIMARY KEY(usuario, comunidade, data)
+);
+
+CREATE TABLE equipamento_doado (
+  usuario VARCHAR(64),
+  comunidade VARCHAR(64),
+  data DATE NOT NULL DEFAULT NOW(),
+  nome_do_equipamento VARCHAR(64),
+
+  CONSTRAINT pk_equipamento_doado PRIMARY KEY(usuario, comunidade, data, nome_do_equipamento),
+  CONSTRAINT fk_equipamento_doado_doacao_para_comunidade FOREIGN KEY(usuario, comunidade, data)
+    REFERENCES doacao_para_comunidade(usuario, comunidade, data)
+    ON DELETE CASCADE
 );
