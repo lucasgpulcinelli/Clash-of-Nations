@@ -291,3 +291,32 @@ CREATE TABLE topico (
   UNIQUE(criador, data_de_criacao),
   CONSTRAINT fk_topico_usuario FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE RESTRICT
 );
+
+CREATE TABLE mensagem (
+  id SERIAL,
+  topico SERIAL NOT NULL,
+  criador VARCHAR(64) NOT NULL,
+  data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
+  mensagem_respondida SERIAL,
+  numero_de_curtidas NUMERIC NOT NULL DEFAULT 0,
+  conteudo TEXT NOT NULL,
+
+  CONSTRAINT pk_mensagem PRIMARY KEY (id),
+  UNIQUE(topico, criador, data_de_criacao),
+  CONSTRAINT fk_mensagem_topico FOREIGN KEY(topico) REFERENCES topico(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_mensagem_usuario FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE RESTRICT,
+  CONSTRAINT fk_mensagem_mensagem FOREIGN KEY(mensagem_respondida) REFERENCES mensagem(id),
+
+  CONSTRAINT ck_mensagem_id_mensagem_respondida CHECK ( id <> mensagem_respondida )
+);
+
+CREATE TABLE moderador_oculta_mensagem (
+  mensagem SERIAL,
+  moderador VARCHAR(64) UNIQUE NOT NULL,
+
+  CONSTRAINT pk_moderador_oculta_mensagem PRIMARY KEY (mensagem),
+  CONSTRAINT fk_moderador_oculta_mensagem_mensagem
+    FOREIGN KEY(mensagem) REFERENCES mensagem(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_moderador_oculta_mensagem_usuario
+    FOREIGN KEY(moderador) REFERENCES usuario(nome) ON DELETE RESTRICT
+);
