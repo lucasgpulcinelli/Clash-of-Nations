@@ -2,12 +2,12 @@ CREATE TYPE ClassePersonagem AS ENUM ('mago', 'guerreiro', 'atirador', 'curandei
 CREATE TYPE EspecializacaoPersonagem AS ENUM ('comerciante', 'diplomata');
 
 CREATE TABLE usuario (
-  nome VARCHAR(50),
-  email VARCHAR(50) UNIQUE NOT NULL,
+  nome VARCHAR(64),
+  email VARCHAR(64) UNIQUE NOT NULL,
   data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
-  senha VARCHAR(50) NOT NULL,
+  senha VARCHAR(64) NOT NULL,
   moderador BOOLEAN NOT NULL DEFAULT false,
-  aconselhador VARCHAR(50),
+  aconselhador VARCHAR(64),
 
   CONSTRAINT pk_usuario PRIMARY KEY (nome),
   CONSTRAINT fk_usuario_usuario
