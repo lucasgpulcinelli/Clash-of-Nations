@@ -63,8 +63,8 @@ def register():
     # try to add that user, if any error occurs, send a client error response
     statement = "INSERT INTO usuario (nome, email, senha) VALUES (%s, %s, %s)"
     try:
-        db.insert(statement, [username, email, password])
-    except Exception as e:
+        db.query(statement, [username, email, password])
+    except db.Error as e:
         if type(e) == dberr.UniqueViolation:
             text = 'User or email already exists'
         elif type(e) == dberr.StringDataRightTruncation:

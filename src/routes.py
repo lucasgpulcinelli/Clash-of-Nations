@@ -53,6 +53,9 @@ def admin():
         return flask.Response('<h1>Forbidden</h1>', 403)
 
     query = "SELECT nome, email, data_de_criacao FROM usuario;"
-    users = db.query(query, db.every)
+    try:
+        users = db.query(query, quantityLambda=db.every)
+    except db.Error as e:
+        return flask.render_template('server_error.html', errtype=type(e).__name__, err=e, status=500)
 
     return flask.render_template('admin.html', users=users)
