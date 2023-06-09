@@ -6,7 +6,7 @@ import apiroutes
 from session import sessions
 
 # create the main flask application
-app = flask.Flask('Clash of Nations', template_folder="res")
+app = flask.Flask('Clash of Nations', '')
 
 # register all non-html routes
 app.register_blueprint(apiroutes.api_bp)
@@ -17,23 +17,18 @@ def root():
     return flask.redirect('/index.html')
 
 
-@app.route('/index.html')
-def index():
-    return flask.render_template('index.html')
-
-
 @app.route('/login.html')
 def loginPage():
     if flask.request.cookies.get('sid'):
         return flask.redirect('/userhub.html')
-    return flask.render_template('login.html')
+    return app.send_static_file('login.html')
 
 
 @app.route('/register.html')
 def registerPage():
     if flask.request.cookies.get('sid'):
         return flask.redirect('/userhub.html')
-    return flask.render_template('register.html')
+    return app.send_static_file('register.html')
 
 
 @app.route('/userhub.html')
@@ -56,6 +51,6 @@ def admin():
     try:
         users = db.query(query, quantityLambda=db.every)
     except db.Error as e:
-        return flask.render_template('server_error.html', errtype=type(e).__name__, err=e, status=500)
+        return flask.render_template('server_error.html', errtype=type(e).__name__, err=e), 500
 
     return flask.render_template('admin.html', users=users)

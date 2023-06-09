@@ -15,7 +15,8 @@ WORKDIR /srv/
 
 COPY --from=build /srv/ /srv/
 COPY ./src/ /srv/
-COPY ./res/ /srv/res/
+COPY ./templates/ /srv/templates/
+COPY ./static/ /srv/static/
 
 ENTRYPOINT ["venv/bin/python"]
 CMD ["main.py", "production"]

@@ -8,10 +8,10 @@ import session
 
 # generate a blueprint: a variable we can add routes and can be imported by the
 # main app
-api_bp = flask.Blueprint('api_bp', __name__)
+api_bp = flask.Blueprint('api_bp', __name__, url_prefix='/api')
 
 
-@api_bp.route('/api/login', methods=['POST'])
+@api_bp.route('/login', methods=['POST'])
 def login():
     '''
     login authenticates login requests, creating session cookies and adding
@@ -46,7 +46,7 @@ def login():
     return resp
 
 
-@api_bp.route('/api/register', methods=['POST'])
+@api_bp.route('/register', methods=['POST'])
 def register():
     '''
     register creates new users in the database.
