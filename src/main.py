@@ -15,4 +15,4 @@ if __name__ == "__main__":
     if production:
         waitress.serve(routes.app)
     else:
-        routes.app.run('0.0.0.0', 8080, debug=True)
+        routes.app.run('0.0.0.0', 3000, debug=True)

@@ -1,0 +1,16 @@
+
+body{
+    background-size:contain;
+}
+
+.linkItem{
+    background-color:#40889c9b;
+    max-width:800px;
+    border: solid 2px #145DA0;
+    text-decoration: none;
+    color:#889c9b;
+}
+
+.linkItem:hover { 
+    background-color: #66889c9b;
+}
