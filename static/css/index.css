@@ -1,16 +1,20 @@
 
 body{
     background-size:contain;
+    background-repeat: round;
+    background-position: left;
 }
 
 .linkItem{
-    background-color:#40889c9b;
+    background-color:#e5e5e5;
+    opacity: 85%;
     max-width:800px;
-    border: solid 2px #145DA0;
+    border: solid 2px whitesmoke;
     text-decoration: none;
-    color:#889c9b;
+    color:#2E6E65;
 }
 
 .linkItem:hover { 
-    background-color: #66889c9b;
+    background-color: #e5e5e5;
+    opacity: 100%;
 }

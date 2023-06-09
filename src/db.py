@@ -2,19 +2,10 @@ import psycopg2
 import psycopg2.pool
 import os
 import sys
-from dotenv import load_dotenv
 
 try:
-<<<<<<< Updated upstream
     # create a connection pool to the database using the environment variables
     # provided.
-=======
-
-    # read the variables from the .env file
-    load_dotenv()
-
-    # connect to the database using the environment variables provided
->>>>>>> Stashed changes
     # important: this file is imported multiple times, however this does not
     # create many different pools: if you look at the properties internally,
     # you will see that the pool is the exact same
