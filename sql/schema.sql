@@ -26,7 +26,7 @@ CREATE TABLE Cla (
 
   CONSTRAINT PK_Cla PRIMARY KEY (nacao, nome),
   CONSTRAINT FK_Cla_Nacao FOREIGN KEY (nacao)
-    REFERENCES Nacao(nome)
+    REFERENCES Nacao(nome) ON DELETE CASCADE
 );
 
 CREATE TABLE Personagem (
@@ -47,11 +47,11 @@ CREATE TABLE Personagem (
   CONSTRAINT PK_Personagem PRIMARY KEY (ID),
   CONSTRAINT SK_Personagem UNIQUE (nome, usuario),
   CONSTRAINT FK_Personagem_clan FOREIGN KEY (nacao_do_clan, nome_do_clan)
-    REFERENCES Cla(nacao, nome),
+    REFERENCES Cla(nacao, nome) ON DELETE SET NULL,
   CONSTRAINT FK_Personagem_nacao FOREIGN KEY (nacao)
-    REFERENCES Nacao(nome),
+    REFERENCES Nacao(nome) ON DELETE CASCADE,
   CONSTRAINT FK_Personagem_usuario FOREIGN KEY (usuario)
-    REFERENCES usuario(nome)
+    REFERENCES usuario(nome) ON DELETE CASCADE
 
 );
 
@@ -97,7 +97,7 @@ CREATE TABLE missao (
   masmorra VARCHAR(64) NOT NULL,
 
   CONSTRAINT PK_MISSAO PRIMARY KEY(nome),
-  CONSTRAINT FK_MISSAO_MASMORRA FOREIGN KEY(masmorra) REFERENCES masmorra(nome),
+  CONSTRAINT FK_MISSAO_MASMORRA FOREIGN KEY(masmorra) REFERENCES masmorra(nome) ON DELETE CASCADE,
 
   CONSTRAINT CK_MISSAO_EXP_GERADO CHECK (exp_gerado >= 0),
   CONSTRAINT CK_MISSAO_TEMPO CHECK (tempo_finalizar >= 0)
@@ -133,8 +133,8 @@ CREATE TABLE itens_gerados_missao (
   quantidade NUMERIC NOT NULL,
 
   CONSTRAINT PK_ITENS_GERADOS_MISSAO PRIMARY KEY(item, missao),
-  CONSTRAINT FK_ITENS_GERADOS_ITEM FOREIGN KEY(item) REFERENCES item(nome),
-  CONSTRAINT FK_ITENS_GERADOS_MISSAO FOREIGN KEY(missao) REFERENCES missao(nome),
+  CONSTRAINT FK_ITENS_GERADOS_ITEM FOREIGN KEY(item) REFERENCES item(nome) ON DELETE CASCADE,
+  CONSTRAINT FK_ITENS_GERADOS_MISSAO FOREIGN KEY(missao) REFERENCES missao(nome) ON DELETE CASCADE, 
 
   CONSTRAINT CK_ITENS_GERADOS_QTT CHECK (quantidade >= 0)
 );
@@ -154,8 +154,8 @@ CREATE TABLE criacao_comunidade (
   pontuacao NUMERIC NOT NULL,
 
   CONSTRAINT PK_CRIACAO_COMUNIDADE PRIMARY KEY(missao),
-  CONSTRAINT FK_CRIACAO_COMUNIDADE_MISSAO FOREIGN KEY(missao) REFERENCES missao(nome),
-  CONSTRAINT FK_CRIACAO_COMUNIDADE_COMUNIDADE FOREIGN KEY(comunidade) REFERENCES comunidade_carente(nome),
+  CONSTRAINT FK_CRIACAO_COMUNIDADE_MISSAO FOREIGN KEY(missao) REFERENCES missao(nome) ON DELETE CASCADE,
+  CONSTRAINT FK_CRIACAO_COMUNIDADE_COMUNIDADE FOREIGN KEY(comunidade) REFERENCES comunidade_carente(nome) ON DELETE CASCADE,
 
   CONSTRAINT CK_PONTUACAO CHECK (pontuacao >= 0)
 );
@@ -168,7 +168,7 @@ CREATE TABLE participacao_missao (
   finalizaou BOOLEAN DEFAULT false,
 
   CONSTRAINT PK_PARTICIPACAO_MISSAO PRIMARY KEY(missao, nacao, cla, data_termino),
-  CONSTRAINT FK_PARTICIPACAO_NACAO_CLA FOREIGN KEY(nacao, cla) REFERENCES Cla(nacao, nome)
+  CONSTRAINT FK_PARTICIPACAO_NACAO_CLA FOREIGN KEY(nacao, cla) REFERENCES Cla(nacao, nome) ON DELETE CASCADE
 );
 
 CREATE TABLE consumivel (
@@ -176,7 +176,7 @@ CREATE TABLE consumivel (
   tempo_duracao NUMERIC NOT NULL, -- segundos
 
   CONSTRAINT PK_CONSUMIVEL PRIMARY KEY(item),
-  CONSTRAINT FK_CONSUMIVEL_ITEM FOREIGN KEY(item) REFERENCES item(nome),
+  CONSTRAINT FK_CONSUMIVEL_ITEM FOREIGN KEY(item) REFERENCES item(nome) ON DELETE CASCADE,
 
   CONSTRAINT CK_CONSUMIVEL_TEMPO CHECK (tempo_duracao >= 0)
 );
@@ -186,7 +186,7 @@ CREATE TABLE efeito_consumivel (
   nome VArCHAR(64) NOT NULL,
 
   CONSTRAINT PK_EFEITO_CONSUMIVEL PRIMARY KEY(consumivel, nome),
-  CONSTRAINT FK_EFEITO_CONSUMIVEL FOREIGN KEY(consumivel) REFERENCES consumivel(item)
+  CONSTRAINT FK_EFEITO_CONSUMIVEL FOREIGN KEY(consumivel) REFERENCES consumivel(item) ON DELETE CASCADE
 ); 
 
 CREATE TABLE equipamento (
@@ -199,7 +199,7 @@ CREATE TABLE equipamento (
   de_curandeiro BOOLEAN DEFAULT false,
 
   CONSTRAINT PK_EQUIPAMENTO PRIMARY KEY(item),
-  CONSTRAINT FK_EQUIPAMENTO_ITEM FOREIGN KEY(item) REFERENCES item(nome),
+  CONSTRAINT FK_EQUIPAMENTO_ITEM FOREIGN KEY(item) REFERENCES item(nome) ON DELETE CASCADE,
 
   CONSTRAINT CK_EQUIPAMENTO_PONTOS_PODER CHECK (pontos_poder >= 0)
 );
@@ -209,7 +209,7 @@ CREATE TABLE habilidade_equipamento (
   nome VARCHAR(64) NOT NULL,
 
   CONSTRAINT PK_HABILIDADE_EQUIPAMENTO PRIMARY KEY(equipamento, nome),
-  CONSTRAINT FK_HABILIDADE_EQUIPAMENTO FOREIGN KEY(equipamento) REFERENCES equipamento(item)
+  CONSTRAINT FK_HABILIDADE_EQUIPAMENTO FOREIGN KEY(equipamento) REFERENCES equipamento(item) ON DELETE CASCADE
 );
 
 CREATE TABLE Alianca (
@@ -218,9 +218,9 @@ CREATE TABLE Alianca (
 
   CONSTRAINT PK_Alianca PRIMARY KEY (nacao1, nacao2),
   CONSTRAINT FK_Alianca_nacao1 FOREIGN KEY(nacao1)
-    REFERENCES Nacao(nome),
+    REFERENCES Nacao(nome) ON DELETE CASCADE,
   CONSTRAINT FK_Alianca_nacao2 FOREIGN KEY(nacao2)
-    REFERENCES Nacao(nome),
+    REFERENCES Nacao(nome) ON DELETE CASCADE,
   CONSTRAINT CK_Alianca_Nacao_Igual CHECK (nacao1 != nacao2)
 );
 
@@ -232,10 +232,10 @@ CREATE TABLE Compra_Com_Doacao(
 
   CONSTRAINT PK_Compra_Com_Doacao PRIMARY KEY (personagem, item, data),
   CONSTRAINT FK_Compra_Com_Doacao_personagem FOREIGN KEY (personagem)
-    REFERENCES Personagem(ID),
+    REFERENCES Personagem(ID) ON DELETE CASCADE,
   
   CONSTRAINT FK_Compra_Com_Doacao_item FOREIGN KEY (item)
-    REFERENCES item(nome)
+    REFERENCES item(nome) ON DELETE CASCADE
     
 );
 
@@ -249,11 +249,11 @@ CREATE TABLE Venda(
 
   CONSTRAINT PK_Venda PRIMARY KEY (item, vendedor, comprador),
   CONSTRAINT FK_Venda_vendedor FOREIGN KEY (vendedor)
-    REFERENCES Personagem(ID),
+    REFERENCES Personagem(ID) ON DELETE CASCADE,
   CONSTRAINT FK_Venda_comprador FOREIGN KEY (comprador)
-    REFERENCES Personagem(ID),
+    REFERENCES Personagem(ID) ON DELETE CASCADE,
   CONSTRAINT FK_Venda_item FOREIGN KEY (item)
-    REFERENCES item(nome)
+    REFERENCES item(nome) ON DELETE CASCADE
   
   --CONSTRAINT CK_Venda_vendedor CHECK('comerciante' IN (SELECT especializacao FROM Personagem P WHERE vendedor=P.ID))
 );
@@ -268,7 +268,7 @@ CREATE TABLE Personagem_Possui_Itens(
   CONSTRAINT FK_Personagem_Possui_Itens_item FOREIGN KEY (item)
     REFERENCES item(nome),
   CONSTRAINT FK_Personagem_Possui_Itens_personagem FOREIGN KEY (personagem)
-    REFERENCES Personagem(ID)
+    REFERENCES Personagem(ID) ON DELETE CASCADE
   
   --CONSTRAINT CK_Personagem_Possui_Itens_equipado CHECK((equipado AND ('EQUIPAMENTO' IN UPPER(SELECT tipo FROM item WHERE item.nome = item))) OR (equipado = false) ) --Checar se o item equipado 'e um equipamento
 
@@ -297,7 +297,7 @@ CREATE TABLE topico (
   CONSTRAINT PK_TOPICO PRIMARY KEY (id),
   CONSTRAINT SK_TOPICO UNIQUE(criador, data_de_criacao),
   
-  CONSTRAINT FK_TOPICO_CRIADOR FOREIGN KEY(criador) REFERENCES usuario(nome)
+  CONSTRAINT FK_TOPICO_CRIADOR FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE CASCADE
 );
 
 CREATE TABLE mensagem (
@@ -313,8 +313,8 @@ CREATE TABLE mensagem (
   CONSTRAINT SK_MENSAGEM UNIQUE(topico, criador, data_de_criacao),
   
   CONSTRAINT FK_MENSAGEM_TOPICO FOREIGN KEY(topico) REFERENCES topico(id),
-  CONSTRAINT FK_MENSAGEM_CRIADOR FOREIGN KEY(criador) REFERENCES usuario(nome),
-  CONSTRAINT FK_MENSAGEM_MENSAGEM_RESPONDIDA FOREIGN KEY(mensagem_respondida) REFERENCES mensagem(id)
+  CONSTRAINT FK_MENSAGEM_CRIADOR FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE CASCADE,
+  CONSTRAINT FK_MENSAGEM_MENSAGEM_RESPONDIDA FOREIGN KEY(mensagem_respondida) REFERENCES mensagem(id) ON DELETE CASCADE
 );
 
 CREATE TABLE moderador_oculta_mensagem (
@@ -324,8 +324,8 @@ CREATE TABLE moderador_oculta_mensagem (
   CONSTRAINT PK_MODERADOR_OCULTA_MENSAGEM PRIMARY KEY(mensagem),
   CONSTRAINT SK_MODERADOR_OCULTA_MENSAGEM UNIQUE(moderador),
   
-  CONSTRAINT FK_MODERADOR_OCULTA_MENSAGEM_MENSAGEM FOREIGN KEY(mensagem) REFERENCES mensagem(id),
-  CONSTRAINT FK_MODERADOR_OCULTA_MENSAGEM_MODERADOR FOREIGN KEY(moderador) REFERENCES usuario(nome)
+  CONSTRAINT FK_MODERADOR_OCULTA_MENSAGEM_MENSAGEM FOREIGN KEY(mensagem) REFERENCES mensagem(id) ON DELETE CASCADE,
+  CONSTRAINT FK_MODERADOR_OCULTA_MENSAGEM_MODERADOR FOREIGN KEY(moderador) REFERENCES usuario(nome) ON DELETE CASCADE
 );
 
 CREATE TABLE doacao_para_comunidade (
@@ -344,5 +344,6 @@ CREATE TABLE equipamento_doado (
   nome_do_equipamento VARCHAR(64),
 
   CONSTRAINT PK_EQUIPAMENTO_DOADO PRIMARY KEY(usuario, comunidade, data, nome_do_equipamento),
-  CONSTRAINT FK_EQUIPAMENTO_DOADO_DOACAO FOREIGN KEY(usuario, comunidade, data) REFERENCES doacao_para_comunidade(usuario, comunidade, data)
+  CONSTRAINT FK_EQUIPAMENTO_DOADO_DOACAO FOREIGN KEY(usuario, comunidade, data) 
+    REFERENCES doacao_para_comunidade(usuario, comunidade, data) ON DELETE CASCADE
 );
