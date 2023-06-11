@@ -207,12 +207,12 @@ CREATE TABLE Alianca (
     REFERENCES Nacao(nome),
   CONSTRAINT FK_Alianca_nacao2 FOREIGN KEY(nacao2)
     REFERENCES Nacao(nome),
-  CONSTRAINT CHECK_Alianca_Nacao_Igual CHECK (nacao1 != nacao2)
+  CONSTRAINT CK_Alianca_Nacao_Igual CHECK (nacao1 != nacao2)
 );
 
 CREATE TABLE Compra_Com_Doacao(
   personagem INT,
---  item VARCHAR(32),
+  item VARCHAR(64),
   data TIMESTAMP DEFAULT NOW(),
   quantidade INT NOT NULL DEFAULT 1,
 
@@ -220,14 +220,14 @@ CREATE TABLE Compra_Com_Doacao(
   CONSTRAINT FK_Compra_Com_Doacao_personagem FOREIGN KEY (personagem)
     REFERENCES Personagem(ID),
   
---  CONSTRAINT FK_Compra_Com_Doacao_item FOREIGN KEY (item)
---    REFERENCES Item(nome),
+ CONSTRAINT FK_Compra_Com_Doacao_item FOREIGN KEY (item)
+   REFERENCES item(nome),
     
 
 );
 
 CREATE TABLE Venda(
-  --item VARCHAR(32),
+  item VARCHAR(64),
   vendedor INT,
   comprador INT,
   data TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -239,24 +239,25 @@ CREATE TABLE Venda(
     REFERENCES Personagem(ID),
   CONSTRAINT FK_Venda_comprador FOREIGN KEY (comprador)
     REFERENCES Personagem(ID),
-  -- CONSTRAINT FK_Venda_item FOREIGN KEY (item)
-  --   REFERENCES Item(nome),
+  CONSTRAINT FK_Venda_item FOREIGN KEY (item)
+    REFERENCES item(nome),
   
-  CONSTRAINT Check_Venda_vendedor CHECK('comerciante' IN (SELECT especializacao FROM Personagem P WHERE vendedor=P.ID))
+  CONSTRAINT CK_Venda_vendedor CHECK('comerciante' IN (SELECT especializacao FROM Personagem P WHERE vendedor=P.ID))
 );
 
 CREATE TABLE Personagem_Possui_Itens(
   personagem INT,
-  --item VARCHAR(32),
+  item VARCHAR(64),
   quantidade INT NOT NULL DEFAULT 1,
   equipado BOOLEAN NOT NULL DEFAULT false,
 
   CONSTRAINT PK_Personagem_Possui_Itens PRIMARY KEY (personagem, item)
-  -- CONSTRAINT FK_Personagem_Possui_Itens_item FOREIGN KEY (item)
-  --   REFERENCES Item(nome),
+  CONSTRAINT FK_Personagem_Possui_Itens_item FOREIGN KEY (item)
+    REFERENCES item(nome),
   CONSTRAINT FK_Personagem_Possui_Itens_personagem FOREIGN KEY (personagem)
     REFERENCES Personagem(ID),
-  --(CHECAR SE ITEM EH EQUIPAVEL) CONSTRAINT Check_Personagem_Possui_Itens_equipado CHECK(equipado AND () )
+  
+  CONSTRAINT CK_Personagem_Possui_Itens_equipado CHECK((equipado AND ('EQUIPAMENTO' IN UPPER(SELECT tipo FROM item WHERE item.nome = item))) OR (equipado = false) ) --Checar se o item equipado 'e um equipamento
 
 );
 
@@ -269,6 +270,6 @@ CREATE TABLE Vota_Em_Alianca(
   CONSTRAINT FK_Vota_Em_Alianca_personagem FOREIGN KEY (personagem)
     REFERENCES Personagem(ID),
   
-  CONSTRAINT Check_Vota_Em_Alianca_diplomata CHECK ('diplomata' IN (SELECT especializacao FROM Personagem P WHERE personagem=P.ID))
+  CONSTRAINT CK_Vota_Em_Alianca_diplomata CHECK ('diplomata' IN (SELECT especializacao FROM Personagem P WHERE personagem=P.ID))
 
 );
