@@ -30,16 +30,16 @@ CREATE TABLE Cla (
 );
 
 CREATE TABLE Personagem (
-  ID INT GENERATED ALWAYS AS IDENTITY,
+  ID SERIAL,
   nome VARCHAR(32) NOT NULL,
   nacao VARCHAR(32) NOT NULL,
   usuario VARCHAR(50) NOT NULL,
-  pontos_de_poder INT NOT NULL,
-  vida_maxima INT NOT NULL DEFAULT 100,
-  dinheiro INT NOT NULL DEFAULT 0,
+  pontos_de_poder NUMERIC NOT NULL,
+  vida_maxima NUMERIC NOT NULL DEFAULT 100,
+  dinheiro NUMERIC NOT NULL DEFAULT 0,
   classe ClassePersonagem NOT NULL,
   historia VARCHAR(100),
-  experiencia INT NOT NULL DEFAULT 0,
+  experiencia NUMERIC NOT NULL DEFAULT 0,
   nacao_do_clan VARCHAR(32),
   nome_do_clan VARCHAR(32),
   especializacao EspecializacaoPersonagem,
@@ -139,6 +139,15 @@ CREATE TABLE itens_gerados_missao (
   CONSTRAINT CK_ITENS_GERADOS_QTT CHECK (quantidade >= 0)
 );
 
+CREATE TABLE comunidade_carente (
+  nome VARCHAR(64),
+  local VARCHAR(100) NOT NULL,
+  pontuação_total NUMERIC NOT NULL DEFAULT 0,
+
+  CONSTRAINT PK_COMUNIDADE_CARENTE PRIMARY KEY (nome)
+
+);
+
 CREATE TABLE criacao_comunidade (
   missao VARCHAR(64) NOT NULL,
   comunidade VARCHAR(64) NOT NULL,
@@ -146,6 +155,7 @@ CREATE TABLE criacao_comunidade (
 
   CONSTRAINT PK_CRIACAO_COMUNIDADE PRIMARY KEY(missao),
   CONSTRAINT FK_CRIACAO_COMUNIDADE_MISSAO FOREIGN KEY(missao) REFERENCES missao(nome),
+  CONSTRAINT FK_CRIACAO_COMUNIDADE_COMUNIDADE FOREIGN KEY(comunidade) REFERENCES comunidade_carente(nome),
 
   CONSTRAINT CK_PONTUACAO CHECK (pontuacao >= 0)
 );
@@ -215,10 +225,10 @@ CREATE TABLE Alianca (
 );
 
 CREATE TABLE Compra_Com_Doacao(
-  personagem INT,
+  personagem INTEGER,
   item VARCHAR(64),
   data TIMESTAMP DEFAULT NOW(),
-  quantidade INT NOT NULL DEFAULT 1,
+  quantidade NUMERIC NOT NULL DEFAULT 1,
 
   CONSTRAINT PK_Compra_Com_Doacao PRIMARY KEY (personagem, item, data),
   CONSTRAINT FK_Compra_Com_Doacao_personagem FOREIGN KEY (personagem)
@@ -231,11 +241,11 @@ CREATE TABLE Compra_Com_Doacao(
 
 CREATE TABLE Venda(
   item VARCHAR(64),
-  vendedor INT,
-  comprador INT,
+  vendedor INTEGER,
+  comprador INTEGER,
   data TIMESTAMP NOT NULL DEFAULT NOW(),
-  valor_total INT NOT NULL,
-  quantidade INT NOT NULL DEFAULT 1,
+  valor_total NUMERIC NOT NULL,
+  quantidade NUMERIC NOT NULL DEFAULT 1,
 
   CONSTRAINT PK_Venda PRIMARY KEY (item, vendedor, comprador),
   CONSTRAINT FK_Venda_vendedor FOREIGN KEY (vendedor)
@@ -249,9 +259,9 @@ CREATE TABLE Venda(
 );
 
 CREATE TABLE Personagem_Possui_Itens(
-  personagem INT,
+  personagem INTEGER,
   item VARCHAR(64),
-  quantidade INT NOT NULL DEFAULT 1,
+  quantidade NUMERIC NOT NULL DEFAULT 1,
   equipado BOOLEAN NOT NULL DEFAULT false,
 
   CONSTRAINT PK_Personagem_Possui_Itens PRIMARY KEY (personagem, item),
@@ -265,7 +275,7 @@ CREATE TABLE Personagem_Possui_Itens(
 );
 
 CREATE TABLE Vota_Em_Alianca(
-  personagem INT,
+  personagem INTEGER,
   nacao VARCHAR(32),
   favoravel BOOLEAN NOT NULL DEFAULT false,
 
@@ -275,4 +285,64 @@ CREATE TABLE Vota_Em_Alianca(
   
   --CONSTRAINT CK_Vota_Em_Alianca_diplomata CHECK ('diplomata' IN (SELECT especializacao FROM Personagem P WHERE personagem=P.ID))
 
+);
+
+CREATE TABLE topico (
+  id SERIAL,
+  criador VARCHAR(64) NOT NULL,
+  titulo VARCHAR(128) NOT NULL,
+  data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
+  assunto TEXT,
+
+  CONSTRAINT PK_TOPICO PRIMARY KEY (id),
+  CONSTRAINT SK_TOPICO UNIQUE(criador, data_de_criacao),
+  
+  CONSTRAINT FK_TOPICO_CRIADOR FOREIGN KEY(criador) REFERENCES usuario(nome)
+);
+
+CREATE TABLE mensagem (
+  id SERIAL,
+  topico INTEGER NOT NULL,
+  criador VARCHAR(64) NOT NULL,
+  data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
+  mensagem_respondida INTEGER,
+  numero_de_curtidas NUMERIC NOT NULL DEFAULT 0,
+  conteudo TEXT NOT NULL,
+
+  CONSTRAINT PK_MENSAGEM PRIMARY KEY (id),
+  CONSTRAINT SK_MENSAGEM UNIQUE(topico, criador, data_de_criacao),
+  
+  CONSTRAINT FK_MENSAGEM_TOPICO FOREIGN KEY(topico) REFERENCES topico(id),
+  CONSTRAINT FK_MENSAGEM_CRIADOR FOREIGN KEY(criador) REFERENCES usuario(nome),
+  CONSTRAINT FK_MENSAGEM_MENSAGEM_RESPONDIDA FOREIGN KEY(mensagem_respondida) REFERENCES mensagem(id)
+);
+
+CREATE TABLE moderador_oculta_mensagem (
+  mensagem SERIAL,
+  moderador VARCHAR(64) NOT NULL,
+
+  CONSTRAINT PK_MODERADOR_OCULTA_MENSAGEM PRIMARY KEY(mensagem),
+  CONSTRAINT SK_MODERADOR_OCULTA_MENSAGEM UNIQUE(moderador),
+  
+  CONSTRAINT FK_MODERADOR_OCULTA_MENSAGEM_MENSAGEM FOREIGN KEY(mensagem) REFERENCES mensagem(id),
+  CONSTRAINT FK_MODERADOR_OCULTA_MENSAGEM_MODERADOR FOREIGN KEY(moderador) REFERENCES usuario(nome)
+);
+
+CREATE TABLE doacao_para_comunidade (
+  usuario VARCHAR(64),
+  comunidade VARCHAR(64),
+  data TIMESTAMP NOT NULL DEFAULT NOW(),
+  valor NUMERIC NOT NULL DEFAULT 0,
+
+  CONSTRAINT PK_DOACAO_PARA_COMUNIDADE PRIMARY KEY(usuario, comunidade, data)
+);
+
+CREATE TABLE equipamento_doado (
+  usuario VARCHAR(64),
+  comunidade VARCHAR(64),
+  data TIMESTAMP NOT NULL DEFAULT NOW(),
+  nome_do_equipamento VARCHAR(64),
+
+  CONSTRAINT PK_EQUIPAMENTO_DOADO PRIMARY KEY(usuario, comunidade, data, nome_do_equipamento),
+  CONSTRAINT FK_EQUIPAMENTO_DOADO_DOACAO FOREIGN KEY(usuario, comunidade, data) REFERENCES doacao_para_comunidade(usuario, comunidade, data)
 );
