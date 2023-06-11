@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>Clash of Nations</title>
+  </head>
+  <body>
+    <h2>Personagens de {{user}}</h2>
+    {% if characters|length == 0 %}
+    <p>Você não tem nenhum personagem cadastrado!</p>
+    {% else %}
+    <ul>
+      {% for character in characters %}
+      <li><a href="/charhub.html?char={{character[0]}}">{{character[1]}}: um {{character[3]}} de {{character[2]}}</a></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </body>
+</html>
+

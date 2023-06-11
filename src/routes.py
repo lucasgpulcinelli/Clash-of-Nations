@@ -37,7 +37,37 @@ def user_hub():
     if (not sid) or sessions.get(sid) is None:
         return flask.redirect('/login.html')
 
-    return flask.render_template('userhub.html')
+    user = sessions[sid]
+
+    query = "SELECT ID, nome, nacao, classe FROM Personagem WHERE usuario = %s"
+    try:
+        characters = db.query(query, [user], db.every)
+    except db.Error as e:
+        return flask.render_template('server_error.html', errtype=type(e).__name__, err=e), 500
+
+    return flask.render_template('userhub.html', user=user, characters=characters)
+
+
+@app.route('/charhub.html')
+def char_hub():
+    sid = flask.request.cookies.get('sid')
+    if (not sid) or sessions.get(sid) is None:
+        return flask.redirect('/login.html')
+
+    user = sessions[sid]
+
+    character = flask.request.args.get('char')
+    if character is None:
+        return flask.redirect('/userhub.html')
+
+    basicq = "SELECT nome, nacao, classe FROM Personagem WHERE usuario = %s AND ID = %s"
+    basic_data = db.query(basicq, [user, character], db.one)
+    if basic_data is None:  # either the character does not exist, or the user is not it's owner
+        return flask.redirect('/userhub.html')
+
+    # add more queries
+
+    return flask.render_template('charhub.html', basic_data=basic_data)
 
 
 @app.route('/admin.html')
