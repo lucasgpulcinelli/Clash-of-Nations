@@ -17,19 +17,19 @@
       <h1 class="text-light">Login</h1>
     </main>
     
-    <form class="container-fluid text-light">
+    <form class="container-fluid text-light" action="/api/login" method="post">
 
         <div class="input-field row mx-auto">
             <div class="mb-3">
                 <label for="name" class="form-label">Nome</label>
-                <input type="text" class="form-control" id="name" required>
+                <input type="text" class="form-control" id="name" name="username" required>
             </div>
         </div>
 
         <div class="input-field row mx-auto">
             <div class="mb-3">
                 <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" required>
+                <input type="password" class="form-control" id="password" name="password" required>
             </div>
         </div>
 
