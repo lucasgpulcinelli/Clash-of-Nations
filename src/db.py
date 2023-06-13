@@ -4,13 +4,17 @@ import os
 import sys
 
 try:
+    host = os.environ.get('POSTGRES_URL')
+    if host is None:
+        host = "localhost"
+
     # create a connection pool to the database using the environment variables
     # provided.
     # important: this file is imported multiple times, however this does not
     # create many different pools: if you look at the properties internally,
     # you will see that the pool is the exact same
     pool = psycopg2.pool.ThreadedConnectionPool(1, 5,
-                                                host=os.environ['POSTGRES_URL'],
+                                                host=host,
                                                 user=os.environ['POSTGRES_USER'],
                                                 password=os.environ['POSTGRES_PASSWORD'])
 except Exception as e:
@@ -35,6 +39,7 @@ def one(cursor):
 
 def get(n):
     return lambda cursor, n=n: cursor.fetchmany(n)
+
 
 def no_read(cursor):
     return None
