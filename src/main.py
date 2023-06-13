@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-import psycopg2
-from dotenv import dotenv_values
+import sys
+import waitress
 
-config = dotenv_values(".env")
+# get all routes for the application
+import routes
+
 
 if __name__ == "__main__":
-    conn = psycopg2.connect(f"host='localhost'                                 \
-                              user='{config['POSTGRES_USER']}'                 \
-                              password='{config['POSTGRES_PASSWORD']}'")
-    cur = conn.cursor()
+    # run in production or debug mode to ease development depending on sys.argv.
+    production = False
+    if len(sys.argv) >= 2 and sys.argv[1] == 'production':
+        production = True
 
-    cur.execute("SELECT (nome, data_de_criacao, aconselhador) FROM usuario;")
-    print(cur.fetchall())
-
+    if production:
+        waitress.serve(routes.app)
+    else:
+        routes.app.run('0.0.0.0', 8080, debug=True)

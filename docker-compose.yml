@@ -7,15 +7,33 @@ services:
     env_file:
       - .env
     networks:
-      - sql
+      - app
     ports:
-      - 5432:5432
+      - 5432:5432 # in production, use only 5432, this exposes the db to the host machine, userful for development
     volumes:
       - ./sql:/docker-entrypoint-initdb.d:z
-      - ./data:/var/lib/postgresql/data:z
+      # if data resiliency is a must, add - /path/to/data::/var/lib/postgresql/data:z
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+  clash-of-nations:
+    build: .
+    container_name: clash-of-nations
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - app
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8080:8080 # don't do this in production, use a reverse proxy like nginx
 
 networks:
-  sql:
+  app:
     driver: bridge
-    name: sql
+    name: app
 
