@@ -1,8 +1,8 @@
 
 body{
-    background-size:contain;
-    background-repeat: round;
-    background-position: left;
+    background-size:cover;
+    background-repeat: no-repeat;
+    background-position: center;
     font-family: 'Roboto', sans-serif;
 }
 
