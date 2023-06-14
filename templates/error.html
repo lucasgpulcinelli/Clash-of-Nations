@@ -1,0 +1,29 @@
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clash of Nations</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+
+  <body background="/images/castle1.jpg" class="text-center p-3">
+
+    <script>
+
+        window.onload = function fireSweetAlert() {
+            Swal.fire(
+                'Error: {{ error }}',
+                '{{errorMessage}}',
+                'error'
+            ).then((result) => {
+                window.location.assign("{{ url_for('root') }}")
+            });
+        }
+
+    </script>
+
+  </body>
+
+</html>
