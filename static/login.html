@@ -48,22 +48,17 @@
                 method: 'POST',
                 body: new URLSearchParams(new FormData(event.target))
             }).then((response) => {
-                if (response.status != 201) { //error
-                    return [response,response.text()]
+                if (!response.ok) { //error
+                    response.text().then((error) => {
+                        Swal.fire(
+                            `${response.statusText} ${response.status}`,
+                            `${error}`,
+                            'error'
+                        )
+                    })
                 }else{
                     location.reload()
                 }
-                return [response,response.text()]
-            }).then((response) => {
-                
-                response[1].then((body) => {
-                    Swal.fire(
-                        `${response[0].statusText} ${response[0].status}`,
-                        `${body}`,
-                        'error'
-                    )
-                })
-
             })
             
         });
