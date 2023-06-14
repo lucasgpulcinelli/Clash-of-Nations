@@ -22,16 +22,16 @@ def login():
     username = flask.request.form.get('username')
     password = flask.request.form.get('password')
     if username is None or password is None:
-        return flask.render_template('error.html',error=400,errorMessage="Bad Request")
+        return flask.Response('<h1>Bad Request</h1>', 400)
 
     # get the password for that user, if it exists
     response = db.query(
         "SELECT senha FROM usuario WHERE nome=%s;", [username], db.one)
 
     if response is None:
-        return flask.render_template('error.html',error=401,errorMessage="User does not exist")
+        return flask.Response('<h1>User does not exist</h1>', 401)
     if response[0] != password:  # check if the password is correct
-        return flask.render_template('error.html',error=401,errorMessage="Invalid Password")
+        return flask.Response('<h1>Invalid Password</h1>', 401)
 
     # generate a session id for the newly logged in user
 
@@ -58,7 +58,7 @@ def register():
     email = flask.request.form.get('email')
     password = flask.request.form.get('password')
     if username is None or email is None or password is None:
-        return flask.render_template('error.html',error=400,errorMessage="Bad Request")
+        return flask.Response('<h1>Bad Request</h1>', 400)
 
     # try to add that user, if any error occurs, send a client error response
     statement = "INSERT INTO usuario (nome, email, senha) VALUES (%s, %s, %s)"
@@ -73,7 +73,7 @@ def register():
             # catch-all if the error is uncommon
             text = f'{type(e).__name__}: {e}'
 
-        return flask.render_template('error.html',error=409,errorMessage=text)
+        return flask.Response(f'<h1>{text}</h1>', 409)
 
     # the user is registred! The main html page should redirect it to log in
     return flask.Response(status=201)
