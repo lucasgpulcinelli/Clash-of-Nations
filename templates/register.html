@@ -58,7 +58,14 @@
                 if (response.status != 201) { //error
                     return [response,response.text()]
                 }else{
-                    location.reload()
+                    Swal.fire(
+                        'Cadastro Efetuado',
+                        'Faça o login para acessar a plataforma',
+                        'success'
+                    ).then((result) => {
+                        window.location.href = "{{ url_for('root') }}";
+                    })
+                    return
                 }
                 return [response,response.text()]
             }).then((response) => {

@@ -28,7 +28,7 @@ def loginPage():
 def registerPage():
     if flask.request.cookies.get('sid'):
         return flask.redirect('/userhub.html')
-    return app.send_static_file('register.html')
+    return flask.render_template('register.html')
 
 
 @app.route('/userhub.html')
