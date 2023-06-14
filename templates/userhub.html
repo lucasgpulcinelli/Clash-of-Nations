@@ -1,18 +1,51 @@
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Clash of Nations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
   </head>
-  <body>
-    <h2>Personagens de {{user}}</h2>
-    {% if characters|length == 0 %}
-    <p>Você não tem nenhum personagem cadastrado!</p>
-    {% else %}
-    <ul>
-      {% for character in characters %}
-      <li><a href="/charhub.html?char={{character[0]}}">{{character[1]}}: um {{character[3]}} de {{character[2]}}</a></li>
-      {% endfor %}
-    </ul>
-    {% endif %}
+  <body background="/images/castle2.jpg" class="text-center">
+
+    <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+      <div class="container-fluid">
+
+        <a class="navbar-brand" href="{{ url_for('root') }}">Clash of Nations</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="{{ url_for('user_hub') }}">Personagens</a>
+            <a class="nav-link" href="{{ url_for('root') }}">Sair</a>
+          </div>
+        </div>
+        
+      </div>
+    </nav>    
+
+    <main class="p-3">
+
+      <h2>Personagens de {{user}}</h2>
+      {% if characters|length == 0 %}
+      <p>Você não tem nenhum personagem cadastrado!</p>
+      {% else %}
+      <ul>
+        {% for character in characters %}
+        <li><a href="/charhub.html?char={{character[0]}}">{{character[1]}}: um {{character[3]}} de {{character[2]}}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
   </body>
 </html>
 
