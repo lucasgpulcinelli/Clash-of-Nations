@@ -3,7 +3,48 @@
     <title>Clash of Nations</title>
   </head>
   <body>
-    <h2>{{basic_data[0]}}, o {{basic_data[2]}} de {{basic_data[1]}}</h2>
+    <h2>{{basic_data[0]}}, o {{basic_data[5]}} de {{basic_data[1]}}</h2>
   </body>
+  <p>Seus dados principais são:</p>
+  <ul>
+    <li>pontos de poder: {{basic_data[2]}}</li>
+    <li>vida máxima: {{basic_data[3]}}</li>
+    <li>dinheiro: ${{basic_data[4]}}</li>
+    <li>experiência: {{basic_data[7]}}</li>
+  </ul>
+  <p>
+  {% if basic_data[9] is not none %}
+    Você é um {{basic_data[9]}}
+  {% else %}
+    Você é um aventureiro
+  {% endif %}
+  </p>
+  <p>
+  {% if basic_data[6] is none %}
+    Você não tem nenhuma hisória, crie ela!
+  {% else %}
+    Sua história de vida: {{basic_data[6]}}
+  {% endif %}
+  </p>
+  {% if items|length == 0 %}
+  <p>Você não tem itens</p>
+  {% else %}
+  <p>Os seus itens são:</p>
+  <ul>
+  {% for item in items %}
+    <li>{{item[1]}} de '{{item[0]}}'{%if item[4] is not none%}, um equipamento com {{item[4]}} pontos de poder extra, de nível mínimo {{item[3]}}{%if item[2]%}, atualmente equipado{%endif%}{%endif%} </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+  {% if basic_data[8] is none %}
+    <p>Você não está em nenhum clã atualmente</p>
+  {% else %}
+    <p>Os seus colegas de clã são:</p>
+    <ul>
+    {% for cf in clan_friends %}
+      <li>{{cf[0]}} de {{cf[1]}}, um {{cf[2]}} com {{cf[3]}} de experiência</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
 </html>
 

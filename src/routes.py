@@ -34,12 +34,22 @@ def registerPage():
 @app.route('/userhub.html')
 def user_hub():
     sid = flask.request.cookies.get('sid')
-    if (not sid) or sessions.get(sid) is None:
+    if not sid:
         return flask.redirect('/login.html')
+    if sessions.get(sid) is None:
+        resp = flask.redirect('/login.html')
+        resp.delete_cookie('sid')
+        return resp
 
     user = sessions[sid]
 
-    query = "SELECT ID, nome, nacao, classe FROM Personagem WHERE usuario = %s"
+    query = '''
+      SELECT ID, nome, nacao, classe
+      FROM Personagem
+      WHERE usuario = %s
+      ORDER BY nome
+    '''
+
     try:
         characters = db.query(query, [user], db.every)
     except db.Error as e:
@@ -60,14 +70,39 @@ def char_hub():
     if character is None:
         return flask.redirect('/userhub.html')
 
-    basicq = "SELECT nome, nacao, classe FROM Personagem WHERE usuario = %s AND ID = %s"
+    basicq = '''
+      SELECT nome, nacao, pontos_de_poder, vida_maxima, dinheiro, classe,
+        historia, experiencia, nome_do_clan, especializacao
+      FROM Personagem
+      WHERE usuario = %s AND ID = %s
+    '''
     basic_data = db.query(basicq, [user, character], db.one)
     if basic_data is None:  # either the character does not exist, or the user is not it's owner
         return flask.redirect('/userhub.html')
 
-    # add more queries
+    itemsq = '''
+      SELECT ppi.item, ppi.quantidade, ppi.equipado, eq.nivel_permitido,
+        eq.pontos_poder
+      FROM Personagem_Possui_Itens ppi
+      LEFT JOIN equipamento eq ON ppi.item = eq.item
+      WHERE ppi.personagem = %s
+      ORDER BY ppi.equipado DESC
+    '''
+    items = db.query(itemsq, [character], db.every)
 
-    return flask.render_template('charhub.html', basic_data=basic_data)
+    if basic_data[8] == None:
+        clan_friends = None
+    else:
+        clanq = '''
+          SELECT p.nome, p.usuario, p.classe, p.experiencia
+          FROM personagem p
+          WHERE p.nacao_do_clan = %s AND p.nome_do_clan = %s AND p.ID != %s
+        '''
+        clan_friends = db.query(clanq, [basic_data[1], basic_data[8],
+                                        character], db.every)
+
+    return flask.render_template('charhub.html', basic_data=basic_data,
+                                 items=items, clan_friends=clan_friends)
 
 
 @app.route('/admin.html')
@@ -77,7 +112,7 @@ def admin():
     if (not sid) or sessions.get(sid) != 'admin':
         return flask.Response('<h1>Forbidden</h1>', 403)
 
-    query = "SELECT nome, email, data_de_criacao FROM usuario;"
+    query = "SELECT nome, email, data_de_criacao FROM usuario"
     try:
         users = db.query(query, quantityLambda=db.every)
     except db.Error as e:
