@@ -38,7 +38,7 @@ CREATE TABLE Personagem (
   vida_maxima NUMERIC NOT NULL DEFAULT 100,
   dinheiro NUMERIC NOT NULL DEFAULT 0,
   classe ClassePersonagem NOT NULL,
-  historia VARCHAR(100),
+  historia TEXT, --Tipo TEXT utilizado para escrever uma história de tamanho grande.
   experiencia NUMERIC NOT NULL DEFAULT 0,
   nacao_do_clan VARCHAR(32),
   nome_do_clan VARCHAR(32),
@@ -46,12 +46,16 @@ CREATE TABLE Personagem (
 
   CONSTRAINT PK_Personagem PRIMARY KEY (ID),
   CONSTRAINT SK_Personagem UNIQUE (nome, usuario),
+  
   CONSTRAINT FK_Personagem_clan FOREIGN KEY (nacao_do_clan, nome_do_clan)
     REFERENCES Cla(nacao, nome) ON DELETE SET NULL,
   CONSTRAINT FK_Personagem_nacao FOREIGN KEY (nacao)
     REFERENCES Nacao(nome) ON DELETE CASCADE,
   CONSTRAINT FK_Personagem_usuario FOREIGN KEY (usuario)
-    REFERENCES usuario(nome) ON DELETE CASCADE
+    REFERENCES usuario(nome) ON DELETE CASCADE,
+
+  --Checar se o personagem é do mesma nação do clan que ele faz parte.
+  CONSTRAINT CK_Nacao_Clan_Personagem CHECK(nacao_do_clan IS NULL OR (nacao_do_clan IS NOT NULL AND nacao_do_clan=nacao))
 
 );
 
