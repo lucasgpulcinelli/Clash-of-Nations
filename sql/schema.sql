@@ -60,7 +60,7 @@ CREATE TABLE item (
   descricao VARCHAR(128) DEFAULT '',
   raridade VARCHAR(16) DEFAULT 'COMUM',
   valor_real NUMERIC NOT NULL,
-  tipo VARCHAR(16) NOT NULL,
+  tipo VARCHAR(16),
   
   CONSTRAINT PK_ITEM PRIMARY KEY(nome),
   CONSTRAINT CK_ITEM_VALOR CHECK(valor_real >= 0),
