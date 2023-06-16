@@ -25,13 +25,16 @@ def login():
         return flask.Response('Bad Request', 400)
 
     # get the password for that user, if it exists
-    response = db.query(
-        "SELECT senha FROM usuario WHERE nome=%s;", [username], db.one)
+    try:
+        response = db.query(
+            "SELECT senha FROM usuario WHERE nome=%s;", [username], db.one)
+    except db.Error:
+        response = None
 
     if response is None:
-        return flask.Response(response='User does not exist', status=401)
+        return flask.Response(response='Usuário não existe', status=401)
     if response[0] != password:  # check if the password is correct
-        return flask.Response('Invalid Password', 401)
+        return flask.Response('Senha inválida', 401)
 
     # generate a session id for the newly logged in user
 
@@ -66,9 +69,9 @@ def register():
         db.query(statement, [username, email, password])
     except db.Error as e:
         if type(e) == dberr.UniqueViolation:
-            text = 'User or email already exists'
+            text = 'Usuário ou email já estão cadastrados'
         elif type(e) == dberr.StringDataRightTruncation:
-            text = 'Text value too large'
+            text = 'Campo de texto muito grande, são aceitos até 50 caracteres'
         else:
             # catch-all if the error is uncommon
             text = f'{type(e).__name__}: {e}'

@@ -53,9 +53,11 @@ def user_hub():
     try:
         characters = db.query(query, [user], db.every)
     except db.Error as e:
-        return flask.render_template('server_error.html', errtype=type(e).__name__, err=e), 500
+        return flask.render_template('server_error.html',
+                                     errtype=type(e).__name__, err=e), 500
 
-    return flask.render_template('userhub.html', user=user, characters=characters)
+    return flask.render_template('userhub.html', user=user,
+                                 characters=characters)
 
 
 @app.route('/charhub.html')
@@ -76,7 +78,12 @@ def char_hub():
       FROM Personagem
       WHERE usuario = %s AND ID = %s
     '''
-    basic_data = db.query(basicq, [user, character], db.one)
+    try:
+        basic_data = db.query(basicq, [user, character], db.one)
+    except db.Error as e:
+        return flask.render_template('server_error.html',
+                                     errtype=type(e).__name__, err=e), 500
+
     if basic_data is None:  # either the character does not exist, or the user is not it's owner
         return flask.redirect('/userhub.html')
 
@@ -88,7 +95,11 @@ def char_hub():
       WHERE ppi.personagem = %s
       ORDER BY ppi.equipado DESC
     '''
-    items = db.query(itemsq, [character], db.every)
+    try:
+        items = db.query(itemsq, [character], db.every)
+    except db.Error as e:
+        return flask.render_template('server_error.html',
+                                     errtype=type(e).__name__, err=e), 500
 
     if basic_data[8] == None:
         clan_friends = None
@@ -98,8 +109,12 @@ def char_hub():
           FROM personagem p
           WHERE p.nacao_do_clan = %s AND p.nome_do_clan = %s AND p.ID != %s
         '''
-        clan_friends = db.query(clanq, [basic_data[1], basic_data[8],
-                                        character], db.every)
+        try:
+            clan_friends = db.query(clanq, [basic_data[1], basic_data[8],
+                                            character], db.every)
+        except db.Error as e:
+            return flask.render_template('server_error.html',
+                                         errtype=type(e).__name__, err=e), 500
 
     return flask.render_template('charhub.html', basic_data=basic_data,
                                  items=items, clan_friends=clan_friends)
@@ -116,6 +131,7 @@ def admin():
     try:
         users = db.query(query, quantityLambda=db.every)
     except db.Error as e:
-        return flask.render_template('server_error.html', errtype=type(e).__name__, err=e), 500
+        return flask.render_template('server_error.html',
+                                     errtype=type(e).__name__, err=e), 500
 
     return flask.render_template('admin.html', users=users)
