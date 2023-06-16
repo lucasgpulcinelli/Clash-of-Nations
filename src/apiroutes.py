@@ -26,15 +26,19 @@ def login():
 
     # get the password for that user, if it exists
     try:
-        response = db.query(
-            "SELECT senha FROM usuario WHERE nome=%s;", [username], db.one)
-    except db.Error:
-        response = None
+        loginq = '''
+          SELECT nome
+          FROM usuario
+          WHERE nome=%s AND senha = crypt(%s, senha)
+        '''
+        response = db.query(loginq, [username, password], db.one)
+    except db.Error as e:
+        return flask.Response(
+            f'Um erro inesperado ocorreu: {type(e).__name__}: {e}'), 500
 
     if response is None:
-        return flask.Response(response='Usuário não existe', status=401)
-    if response[0] != password:  # check if the password is correct
-        return flask.Response('Senha inválida', 401)
+        return flask.Response(response='Usuário não existe ou senha inválida',
+                              status=401)
 
     # generate a session id for the newly logged in user
 
@@ -64,8 +68,13 @@ def register():
         return flask.Response('Bad Request', 400)
 
     # try to add that user, if any error occurs, send a client error response
-    statement = "INSERT INTO usuario (nome, email, senha) VALUES (%s, %s, %s)"
+    statement = '''
+      INSERT INTO usuario (nome, email, senha)
+      VALUES (%s, %s, crypt(%s, gen_salt('bf', 8)))
+    '''
     try:
+        if len(password) > 50:
+            raise dberr.StringDataRightTruncation
         db.query(statement, [username, email, password])
     except db.Error as e:
         if type(e) == dberr.UniqueViolation:
@@ -74,7 +83,7 @@ def register():
             text = 'Campo de texto muito grande, são aceitos até 50 caracteres'
         else:
             # catch-all if the error is uncommon
-            text = f'{type(e).__name__}: {e}'
+            text = f'Um erro inesperado ocorreu: {type(e).__name__}: {e}'
 
         return flask.Response(f'{text}', 409)
 

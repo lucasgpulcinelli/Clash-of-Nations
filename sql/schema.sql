@@ -1,3 +1,5 @@
+CREATE EXTENSION pgcrypto;
+
 CREATE TYPE ClassePersonagem AS ENUM ('mago', 'guerreiro', 'atirador', 'curandeiro');
 CREATE TYPE EspecializacaoPersonagem AS ENUM ('comerciante', 'diplomata');
 
@@ -5,7 +7,7 @@ CREATE TABLE usuario (
   nome VARCHAR(50),
   email VARCHAR(50) UNIQUE NOT NULL,
   data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
-  senha VARCHAR(50) NOT NULL,
+  senha CHAR(60) NOT NULL, -- a senha precisa ter exatamente 60 caracteres porque ela vai estar criptografada usando crypt() com salt do tipo 'bf'
   moderador BOOLEAN NOT NULL DEFAULT false,
   aconselhador VARCHAR(50),
 
