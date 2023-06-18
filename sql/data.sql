@@ -17,11 +17,11 @@ INSERT INTO Cla [(nacao, nome)]
     ('Principado de Astoria', 'Clã Estrelado')
     ('Ducado de Ravenshire', 'Clã dos Corvos Negros');
     
-INSERT INTO Personagem [(nome, nacao, usuario, pontos_de_poder, classe, nacao_do_clan, nome_do_clan)]
+INSERT INTO Personagem [(nome, nacao, usuario, pontos_de_poder, classe, nacao_do_clan, nome_do_clan, especializacao)]
     VALUES 
-    ('Angelob', 'Ducado de Ravenshire', 'angelobguido', 50, 'curandeiro', 'Ducado de Ravenshire', 'Paladinos de Montfort'),
-    ('Lara Power', 'Principado de Astoria', 'guilhermeb', 75, 'mago', 'Principado de Astoria', 'Clã Solaris'),
-    ('Sieg Xoxana', 'Ducado de Ravenshire', 'lucagamer', 60, 'guerreiro', 'Ducado de Ravenshire', 'Clã dos Corvos Negros');
+    ('Angelob', 'Ducado de Ravenshire', 'angelobguido', 50, 'curandeiro', 'Ducado de Ravenshire', 'Paladinos de Montfort', 'comerciante'),
+    ('Lara Power', 'Principado de Astoria', 'guilhermeb', 75, 'mago', 'Principado de Astoria', 'Clã Solaris', 'comerciante'),
+    ('Sieg Xoxana', 'Ducado de Ravenshire', 'lucagamer', 60, 'guerreiro', 'Ducado de Ravenshire', 'Clã dos Corvos Negros', 'diplomata');
 
 INSERT INTO item [(nome, descricao, raridade, valor_real, tipo)]
     VALUES
@@ -80,10 +80,58 @@ INSERT INTO monstro_masmorra [(monstro, masmorra, quantidade)]
     ('Dragão Sombrio', 'Covil do Dragão de Fogo', 3),
     ('Serpente Venenosa', 'Covil do Dragão de Fogo', 20)
 
---missao
---participacao_missao
---itens_gerados_missao
---comunidade_carente
---criacao_comunidade
+INSERT INTO missao [(nome, dificuldade, exp_gerado, tempo_finalizar, masmorra)]
+    VALUES
+    ('O Tesouro das Profundezas', 'Facil', 1000, 180, 'Abismo Profundo'),
+    ('O Segredo dos Espíritos Perdidos', 'MediA', 2500, 240, 'Cripta das Almas Perdidas'),
+    ('A Ira do Dragão Flamejante', 'DIFicil', 5000, 200, 'Covil do Dragão de Fogo'),
+    ('A Provação do Desafiante', 'ImpossIVEL', 10000, 40, 'Abismo Profundo');
 
---...
+INSERT INTO participacao_missao [(missao, nacao, cla, data_termino, finalizou)]
+    VALUES
+    ('O Tesouro das Profundezas', 'Ducado de Ravenshire', 'Paladinos de Montfort', '2021-06-01 00:00:00', true),
+    ('O Segredo dos Espíritos Perdidos', 'Principado de Astoria', 'Clã Solaris', '2021-07-06 00:00:00', false),
+    ('A Ira do Dragão Flamejante', 'Ducado de Ravenshire', 'Clã dos Corvos Negros', '2021-08-01 00:00:00', true),
+    ('A Provação do Desafiante', 'Ducado de Ravenshire', 'Paladinos de Montfort', '2021-09-01 00:00:00', false);
+
+INSERT INTO itens_gerados_missao [(item, missao, quantidade)]
+    VALUES 
+    ('Armadura da Fênix', 'A Provação do Desafiante', 1),
+    ('Amuleto da Sabedoria', 'O Segredo dos Espíritos Perdidos', 10);
+
+INSERT INTO comunidade_carente [(nome, local, pontuacao_total)]
+    VALUES 
+    ('Comunidade Esperança', 'Cidade da Paz', 250),
+    ('Associação Renascer', 'Vila da Floresta', 180),
+    ('Projeto União Fraterna', 'Bairro Novo Horizonte', 300);
+
+INSERT INTO criacao_comunidade [(missao, comunidade, pontuacao)]
+    VALUES 
+    ('A Provação do Desafiante', 'Projeto União Fraterna', 100),
+    ('O Tesouro das Profundezas', 'Associação Renascer', 20),
+    ('A Ira do Dragão Flamejante', 'Comunidade Esperança', 50);
+
+INSERT INTO Alianca [(nacao1, nacao2)]
+    VALUES
+    ('Reino de Eldoria', 'Principado de Astoria'),
+    ('Reino de Eldoria', 'Ducado de Ravenshire');
+
+INSERT INTO Compra_Com_Doacao [(personagem, item, quantidade)]
+    VALUES
+    (1, 'Armadura da Fênix', 10),
+    (1, 'Espada das Sombras', 10);
+
+INSERT INTO Venda [(item, vendedor, comprador, valor_total, quantidade)]
+    VALUES
+    ('Armadura da Fênix', 1, 2, 1000, 1),
+    ('Espada das Sompras', 1, 2, 500, 1);
+
+INSERT INTO Personagem_Possui_Itens [(personagem, item, quantidade, equipado)]
+    VALUES
+    (1, 'Armadura da Fênix', 10, true),
+    (2, 'Poção de Invisibilidade', 50, false);
+
+INSERT INTO Vota_Em_Alianca [(personagem, nacao, favoravel)]
+    VALUES
+    (3, 'Principado de Astoria', true),
+    (3, 'Reino de Eldoria', true);

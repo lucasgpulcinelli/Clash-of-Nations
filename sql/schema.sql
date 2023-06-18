@@ -106,7 +106,9 @@ CREATE TABLE missao (
   CONSTRAINT FK_MISSAO_MASMORRA FOREIGN KEY(masmorra) REFERENCES masmorra(nome) ON DELETE CASCADE,
 
   CONSTRAINT CK_MISSAO_EXP_GERADO CHECK (exp_gerado >= 0),
-  CONSTRAINT CK_MISSAO_TEMPO CHECK (tempo_finalizar >= 0)
+  CONSTRAINT CK_MISSAO_TEMPO CHECK (tempo_finalizar >= 0),
+  CONSTRAINT CK_MISSAO_DIFICULDADE CHECK(UPPER(dificuldade)) IN ('FACIL', 'MEDIA', 'DIFICIL', 'IMPOSSIVEL')
+
 );
 
 CREATE TABLE espolio_monstro(
@@ -148,7 +150,7 @@ CREATE TABLE itens_gerados_missao (
 CREATE TABLE comunidade_carente (
   nome VARCHAR(64),
   local VARCHAR(100) NOT NULL,
-  pontuação_total NUMERIC NOT NULL DEFAULT 0,
+  pontuacao_total NUMERIC NOT NULL DEFAULT 0,
 
   CONSTRAINT PK_COMUNIDADE_CARENTE PRIMARY KEY (nome)
 
@@ -171,7 +173,7 @@ CREATE TABLE participacao_missao (
   nacao VARCHAR(32) NOT NULL,
   cla VARCHAR(32) NOT NULL,
   data_termino TIMESTAMP NOT NULL,
-  finalizaou BOOLEAN DEFAULT false,
+  finalizou BOOLEAN DEFAULT false,
 
   CONSTRAINT PK_PARTICIPACAO_MISSAO PRIMARY KEY(missao, nacao, cla, data_termino),
   CONSTRAINT FK_PARTICIPACAO_NACAO_CLA FOREIGN KEY(nacao, cla) REFERENCES Cla(nacao, nome) ON DELETE CASCADE
