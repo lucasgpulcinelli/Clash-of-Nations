@@ -9,8 +9,12 @@ CREATE TABLE usuario (
   moderador BOOLEAN NOT NULL DEFAULT false,
   aconselhador VARCHAR(50),
 
-  PRIMARY KEY (nome),
-  FOREIGN KEY (aconselhador) REFERENCES usuario(nome)
+  CONSTRAINT pk_usuario PRIMARY KEY (nome),
+  CONSTRAINT fk_usuario_usuario
+    FOREIGN KEY (aconselhador) REFERENCES usuario(nome) ON DELETE RESTRICT,
+
+  CONSTRAINT ck_usuario_email CHECK (email ~ '\w+@(\w+.?)+' ),
+  CONSTRAINT ck_usuario_nome_aconselhador CHECK (nome <> aconselhador)
 );
 
 
