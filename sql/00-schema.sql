@@ -2,17 +2,20 @@ CREATE TYPE ClassePersonagem AS ENUM ('mago', 'guerreiro', 'atirador', 'curandei
 CREATE TYPE EspecializacaoPersonagem AS ENUM ('comerciante', 'diplomata');
 
 CREATE TABLE usuario (
-  nome VARCHAR(50),
-  email VARCHAR(50) UNIQUE NOT NULL,
+  nome VARCHAR(64),
+  email VARCHAR(64) UNIQUE NOT NULL,
   data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
-  senha VARCHAR(50) NOT NULL,
+  senha VARCHAR(64) NOT NULL,
   moderador BOOLEAN NOT NULL DEFAULT false,
-  aconselhador VARCHAR(50),
+  aconselhador VARCHAR(64),
 
-  PRIMARY KEY (nome),
-  FOREIGN KEY (aconselhador) REFERENCES usuario(nome)
+  CONSTRAINT pk_usuario PRIMARY KEY (nome),
+  CONSTRAINT fk_usuario_usuario
+    FOREIGN KEY (aconselhador) REFERENCES usuario(nome) ON DELETE RESTRICT,
+
+  CONSTRAINT ck_usuario_email CHECK (email ~ '\w+@(\w+.?)+' ),
+  CONSTRAINT ck_usuario_nome_aconselhador CHECK (nome <> aconselhador)
 );
-
 
 CREATE TABLE Nacao (
   nome VARCHAR(32),
@@ -64,7 +67,7 @@ CREATE TABLE item (
   descricao TEXT DEFAULT '',
   raridade VARCHAR(16) DEFAULT 'COMUM',
   valor_real NUMERIC NOT NULL,
-  tipo VARCHAR(16) NOT NULL,
+  tipo VARCHAR(16),
   
   CONSTRAINT PK_ITEM PRIMARY KEY(nome),
   CONSTRAINT CK_ITEM_VALOR CHECK(valor_real >= 0),
@@ -149,12 +152,12 @@ CREATE TABLE itens_gerados_missao (
 
 CREATE TABLE comunidade_carente (
   nome VARCHAR(64),
-  local VARCHAR(100) NOT NULL,
-  pontuacao_total NUMERIC NOT NULL DEFAULT 0,
+  local VARCHAR(256) NOT NULL,
+  pontuação_total NUMERIC NOT NULL DEFAULT 0,
 
-  CONSTRAINT PK_COMUNIDADE_CARENTE PRIMARY KEY (nome)
-
+  CONSTRAINT pk_comunidade_carente PRIMARY KEY (nome)
 );
+
 
 CREATE TABLE criacao_comunidade (
   missao VARCHAR(64) NOT NULL,
@@ -294,7 +297,6 @@ CREATE TABLE Vota_Em_Alianca(
     REFERENCES Personagem(ID)
   
   --CONSTRAINT CK_Vota_Em_Alianca_diplomata CHECK ('diplomata' IN (SELECT especializacao FROM Personagem P WHERE personagem=P.ID))
-
 );
 
 CREATE TABLE topico (
@@ -304,55 +306,57 @@ CREATE TABLE topico (
   data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
   assunto TEXT,
 
-  CONSTRAINT PK_TOPICO PRIMARY KEY (id),
-  CONSTRAINT SK_TOPICO UNIQUE(criador, data_de_criacao),
-  
-  CONSTRAINT FK_TOPICO_CRIADOR FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE CASCADE
+  CONSTRAINT pk_topico PRIMARY KEY (id),
+  UNIQUE(criador, data_de_criacao),
+  CONSTRAINT fk_topico_usuario FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE RESTRICT
 );
 
 CREATE TABLE mensagem (
   id SERIAL,
-  topico INTEGER NOT NULL,
+  topico SERIAL NOT NULL,
   criador VARCHAR(64) NOT NULL,
   data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
-  mensagem_respondida INTEGER,
+  mensagem_respondida SERIAL,
   numero_de_curtidas NUMERIC NOT NULL DEFAULT 0,
   conteudo TEXT NOT NULL,
 
-  CONSTRAINT PK_MENSAGEM PRIMARY KEY (id),
-  CONSTRAINT SK_MENSAGEM UNIQUE(topico, criador, data_de_criacao),
-  
-  CONSTRAINT FK_MENSAGEM_TOPICO FOREIGN KEY(topico) REFERENCES topico(id),
-  CONSTRAINT FK_MENSAGEM_CRIADOR FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE CASCADE,
-  CONSTRAINT FK_MENSAGEM_MENSAGEM_RESPONDIDA FOREIGN KEY(mensagem_respondida) REFERENCES mensagem(id) ON DELETE CASCADE
+  CONSTRAINT pk_mensagem PRIMARY KEY (id),
+  UNIQUE(topico, criador, data_de_criacao),
+  CONSTRAINT fk_mensagem_topico FOREIGN KEY(topico) REFERENCES topico(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_mensagem_usuario FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE RESTRICT,
+  CONSTRAINT fk_mensagem_mensagem FOREIGN KEY(mensagem_respondida) REFERENCES mensagem(id),
+
+  CONSTRAINT ck_mensagem_id_mensagem_respondida CHECK ( id <> mensagem_respondida )
 );
 
 CREATE TABLE moderador_oculta_mensagem (
   mensagem SERIAL,
-  moderador VARCHAR(64) NOT NULL,
+  moderador VARCHAR(64) UNIQUE NOT NULL,
 
-  CONSTRAINT PK_MODERADOR_OCULTA_MENSAGEM PRIMARY KEY(mensagem),
-  
-  CONSTRAINT FK_MODERADOR_OCULTA_MENSAGEM_MENSAGEM FOREIGN KEY(mensagem) REFERENCES mensagem(id) ON DELETE CASCADE,
-  CONSTRAINT FK_MODERADOR_OCULTA_MENSAGEM_MODERADOR FOREIGN KEY(moderador) REFERENCES usuario(nome) ON DELETE CASCADE
+  CONSTRAINT pk_moderador_oculta_mensagem PRIMARY KEY (mensagem),
+  CONSTRAINT fk_moderador_oculta_mensagem_mensagem
+    FOREIGN KEY(mensagem) REFERENCES mensagem(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_moderador_oculta_mensagem_usuario
+    FOREIGN KEY(moderador) REFERENCES usuario(nome) ON DELETE RESTRICT
 );
 
 CREATE TABLE doacao_para_comunidade (
   usuario VARCHAR(64),
   comunidade VARCHAR(64),
-  data TIMESTAMP NOT NULL DEFAULT NOW(),
+  data DATE NOT NULL DEFAULT NOW(),
   valor NUMERIC NOT NULL DEFAULT 0,
 
-  CONSTRAINT PK_DOACAO_PARA_COMUNIDADE PRIMARY KEY(usuario, comunidade, data)
+  CONSTRAINT pk_doacao_para_comunidade PRIMARY KEY(usuario, comunidade, data)
 );
 
 CREATE TABLE equipamento_doado (
   usuario VARCHAR(64),
   comunidade VARCHAR(64),
-  data TIMESTAMP NOT NULL DEFAULT NOW(),
+  data DATE NOT NULL DEFAULT NOW(),
   nome_do_equipamento VARCHAR(64),
 
-  CONSTRAINT PK_EQUIPAMENTO_DOADO PRIMARY KEY(usuario, comunidade, data, nome_do_equipamento),
-  CONSTRAINT FK_EQUIPAMENTO_DOADO_DOACAO FOREIGN KEY(usuario, comunidade, data) 
-    REFERENCES doacao_para_comunidade(usuario, comunidade, data) ON DELETE CASCADE
+  CONSTRAINT pk_equipamento_doado PRIMARY KEY(usuario, comunidade, data, nome_do_equipamento),
+  CONSTRAINT fk_equipamento_doado_doacao_para_comunidade FOREIGN KEY(usuario, comunidade, data)
+    REFERENCES doacao_para_comunidade(usuario, comunidade, data)
+    ON DELETE CASCADE
 );
