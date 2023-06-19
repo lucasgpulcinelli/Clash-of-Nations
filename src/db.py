@@ -36,6 +36,7 @@ def one(cursor):
 def get(n):
     return lambda cursor, n=n: cursor.fetchmany(n)
 
+
 def no_read(cursor):
     return None
 

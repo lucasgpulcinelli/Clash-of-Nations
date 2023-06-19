@@ -118,20 +118,3 @@ def char_hub():
 
     return flask.render_template('charhub.html', basic_data=basic_data,
                                  items=items, clan_friends=clan_friends)
-
-
-@app.route('/admin.html')
-def admin():
-    sid = flask.request.cookies.get('sid')
-    # TODO: we should query db for admin access
-    if (not sid) or sessions.get(sid) != 'admin':
-        return flask.Response('<h1>Forbidden</h1>', 403)
-
-    query = "SELECT nome, email, data_de_criacao FROM usuario"
-    try:
-        users = db.query(query, quantityLambda=db.every)
-    except db.Error as e:
-        return flask.render_template('server_error.html',
-                                     errtype=type(e).__name__, err=e), 500
-
-    return flask.render_template('admin.html', users=users)
