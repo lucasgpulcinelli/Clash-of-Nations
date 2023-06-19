@@ -135,3 +135,30 @@ INSERT INTO Vota_Em_Alianca [(personagem, nacao, favoravel)]
     VALUES
     (3, 'Principado de Astoria', true),
     (3, 'Reino de Eldoria', true);
+
+INSERT INTO topico [(criador, titulo, data_de_criacao, assunto)]
+    VALUES
+    ('angelobguido', 'Como obter a Armadura de fenix?', '2022-01-02 00:20:00', 'ajuda'),
+    ('lucagamer', 'Como participar de um clã?', '2021-12-03 00:20:00', 'ajuda');
+
+INSERT INTO mensagem [(topico, criador, data_de_criacao, mensagem_respondida, conteudo)]
+    VALUES 
+    (1, 'angelobguido', '2022-01-02 00:20:00', NULL, 'Como eu obtenho a lendária armadura de fenix??'),
+    (1, 'lucagamer', '2022-01-03 00:20:00', 1, 'Mano, tu precisa fazer a missão A Provação Do Desafiante. É uma missão muito difícil, mas é a única forma que eu sei que é possível'),
+    (2, 'lucasgamer', '2021-12-03 00:20:00', NULL, 'Galera, como eu entro em um clã? Tô meio perdido aqui.'),
+    (2, 'angelobguido', '2021-12-07 00:20:00', 3, 'Deixa de ser mané, é mó fácil. Só precisa ir para o centro da nação(onde vc nasceu) clicar no clã que tu quer lá no grado dos clãs');
+
+INSERT INTO moderador_oculta_mensagem [(mensagem, moderador)]
+    VALUES
+    (2, 'angelobguido'),
+    (4, 'angelobguido');
+
+INSERT INTO doacao_para_comunidade [(usuario, comunidade, data, valor)]
+    VALUES
+    ('angelobguido', 'Comunidade Esperança', '2022-01-09 00:20:00', 1000),
+    ('angelobguido', 'Comunidade Esperança', '2022-01-04 00:20:00', 0);
+
+INSERT INTO equipamento_doado [(usuario, comunidade, data, nome_do_equipamento)]
+    VALUES
+    ('angelobguido', 'Comunidade Esperança', '2022-01-04 00:20:00', 'dois Headset Gamer Dragon Fire')
+    ('angelobguido', 'Comunidade Esperança', '2022-01-04 00:20:00', 'um Mouse Gamer Dragon Fire X')
