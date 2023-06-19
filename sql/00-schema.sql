@@ -153,7 +153,7 @@ CREATE TABLE itens_gerados_missao (
 CREATE TABLE comunidade_carente (
   nome VARCHAR(64),
   local VARCHAR(256) NOT NULL,
-  pontuação_total NUMERIC NOT NULL DEFAULT 0,
+  pontuacao_total NUMERIC NOT NULL DEFAULT 0,
 
   CONSTRAINT pk_comunidade_carente PRIMARY KEY (nome)
 );
@@ -316,7 +316,7 @@ CREATE TABLE mensagem (
   topico SERIAL NOT NULL,
   criador VARCHAR(64) NOT NULL,
   data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
-  mensagem_respondida SERIAL,
+  mensagem_respondida INTEGER,
   numero_de_curtidas NUMERIC NOT NULL DEFAULT 0,
   conteudo TEXT NOT NULL,
 
@@ -331,7 +331,7 @@ CREATE TABLE mensagem (
 
 CREATE TABLE moderador_oculta_mensagem (
   mensagem SERIAL,
-  moderador VARCHAR(64) UNIQUE NOT NULL,
+  moderador VARCHAR(64) NOT NULL,
 
   CONSTRAINT pk_moderador_oculta_mensagem PRIMARY KEY (mensagem),
   CONSTRAINT fk_moderador_oculta_mensagem_mensagem
