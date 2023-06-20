@@ -1,4 +1,5 @@
 <html>
+
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,9 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/main.css">
   </head>
+
   <body background="/images/castle2.jpg" class="text-center">
 
-    <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg bg-dark mb-3" data-bs-theme="dark">
       <div class="container-fluid">
 
         <a class="navbar-brand" href="{{ url_for('root') }}">Clash of Nations</a>
@@ -31,21 +33,41 @@
     </nav>    
 
     <main class="p-3">
+      <h1 class="text-light">Personagens de {{user}}</h1>
+    </main>
 
-      <h2>Personagens de {{user}}</h2>
+    <section>
+
       {% if characters|length == 0 %}
-      <p>Você não tem nenhum personagem cadastrado!</p>
+      <h2>Você não tem nenhum personagem cadastrado!</h2>
+
       {% else %}
-      <ul>
+      <div class="row mx-1">
         {% for character in characters %}
-        <li><a href="/charhub.html?char={{character[0]}}">{{character[1]}}: um {{character[3]}} de {{character[2]}}</a></li>
+        <div class="col-sm-5 mb-sm-0 mx-auto py-4">
+
+          <div class="card border-dark">
+
+            <div class="card-header text-bg-dark">{{character[1]}}</div>
+            
+            <div class="card-body">
+              <p class="card-text">Classe: {{character[3]}}</p>
+              <p class="card-text">Nação: {{character[2]}}</p>
+            </div>
+
+            <a class="stretched-link" href="/charhub.html?char={{character[0]}}"></a>
+
+          </div>
+        
+        </div>
         {% endfor %}
-      </ul>
+      </div>
       {% endif %}
       
-    </main>
+    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
   </body>
+
 </html>
 
