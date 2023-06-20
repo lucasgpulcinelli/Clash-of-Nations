@@ -26,3 +26,11 @@ h1{
 .input-field{
     max-width: 500px;
 }
+
+.accordion {
+	--bs-accordion-btn-color: #f8f9fa;
+	--bs-accordion-btn-bg: #212529;
+	--bs-accordion-active-color: #f8f9fa;
+	--bs-accordion-active-bg: #212529;
+}
+
