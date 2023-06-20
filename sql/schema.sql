@@ -293,11 +293,11 @@ CREATE TABLE topico (
   id SERIAL,
   criador VARCHAR(64) NOT NULL,
   titulo VARCHAR(128) NOT NULL,
-  data_de_criacao TIMESTAMP NOT NULL DEFAULT NOW(),
+  data_de_criacao DATE NOT NULL DEFAULT NOW(),
   assunto TEXT,
 
   CONSTRAINT pk_topico PRIMARY KEY (id),
-  UNIQUE(criador, data_de_criacao),
+  UNIQUE(criador, titulo, data_de_criacao),
   CONSTRAINT fk_topico_usuario FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE RESTRICT
 );
 
@@ -336,7 +336,11 @@ CREATE TABLE doacao_para_comunidade (
   data DATE NOT NULL DEFAULT NOW(),
   valor NUMERIC NOT NULL DEFAULT 0,
 
-  CONSTRAINT pk_doacao_para_comunidade PRIMARY KEY(usuario, comunidade, data)
+  CONSTRAINT pk_doacao_para_comunidade PRIMARY KEY(usuario, comunidade, data),
+  CONSTRAINT fk_doacao_para_comunidade_usuario
+    FOREIGN KEY(usuario) REFERENCES usuario(nome),
+  CONSTRAINT fk_doacao_para_comunidade_comunidade_carente
+    FOREIGN KEY(comunidade) REFERENCES comunidade_carente(nome)
 );
 
 CREATE TABLE equipamento_doado (
