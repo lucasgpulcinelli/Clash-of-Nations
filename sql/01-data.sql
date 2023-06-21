@@ -25,11 +25,11 @@ INSERT INTO Personagem (nome, nacao, usuario, pontos_de_poder, classe, nacao_do_
 
 INSERT INTO item (nome, descricao, raridade, valor_real, tipo)
     VALUES
-    ('Espada das Sombras', 'Uma espada negra com lâmina reluzente. Ela consome a luz ao seu redor, deixando uma trilha de escuridão por onde passa. Aqueles atingidos por ela têm suas energias drenadas.', 'EPICO', 20, 'EQUIPAMENTO'),
-    ('Pergaminho de Cura', 'Um pergaminho antigo e encantado contendo símbolos curativos. Quando ativado, ele emite uma aura radiante que cura ferimentos e restaura a vitalidade dos aliados próximos.', 'RARO', 5, 'CONSUMIVEL'),
-    ('Armadura da Fênix', 'Uma armadura de placas douradas adornadas com penas de fênix. Quando o usuário está prestes a ser derrotado, a armadura emite uma chama sagrada que o envolve, concedendo imortalidade temporária.', 'LENDARIO', 100, 'EQUIPAMENTO'),
-    ('Poção de Invisibilidade', 'Uma poção translúcida que, quando consumida, faz com que o usuário se torne invisível por um curto período. Permite a passagem despercebida por inimigos e facilita a realização de ataques furtivos.', 'COMUM', 1, 'CONSUMIVEL'),
-    ('Amuleto da Sabedoria', 'Um amuleto cravejado de gemas brilhantes, emanando uma aura de conhecimento. Aqueles que o usam têm suas habilidades mentais aprimoradas, permitindo uma maior compreensão de feitiços e uma percepção mais aguçada do mundo ao seu redor.', 'INCOMUM', 15, 'EQUIPAMENTO');
+    ('Espada das Sombras', 'Uma espada negra com lâmina reluzente. Ela consome a luz ao seu redor, deixando uma trilha de escuridão por onde passa. Aqueles atingidos por ela têm suas energias drenadas.', 'epico', 20, 'EQUIPAMENTO'),
+    ('Pergaminho de Cura', 'Um pergaminho antigo e encantado contendo símbolos curativos. Quando ativado, ele emite uma aura radiante que cura ferimentos e restaura a vitalidade dos aliados próximos.', 'raro', 5, 'CONSUMIVEL'),
+    ('Armadura da Fênix', 'Uma armadura de placas douradas adornadas com penas de fênix. Quando o usuário está prestes a ser derrotado, a armadura emite uma chama sagrada que o envolve, concedendo imortalidade temporária.', 'lendario', 100, 'EQUIPAMENTO'),
+    ('Poção de Invisibilidade', 'Uma poção translúcida que, quando consumida, faz com que o usuário se torne invisível por um curto período. Permite a passagem despercebida por inimigos e facilita a realização de ataques furtivos.', 'comum', 1, 'CONSUMIVEL'),
+    ('Amuleto da Sabedoria', 'Um amuleto cravejado de gemas brilhantes, emanando uma aura de conhecimento. Aqueles que o usam têm suas habilidades mentais aprimoradas, permitindo uma maior compreensão de feitiços e uma percepção mais aguçada do mundo ao seu redor.', 'incomum', 15, 'EQUIPAMENTO');
 
 INSERT INTO consumivel (item, tempo_duracao)
     VALUES 
@@ -55,11 +55,11 @@ INSERT INTO habilidade_equipamento (equipamento, nome)
     
 INSERT INTO monstro (nome, vida_maxima, pontos_poder, raridade, habilidade, exp_gerado)
     VALUES
-    ('Dragão Sombrio', 1000, 150, 'LENDARIO', 'Sopro do Caos', 5000),
-    ('Espírito das Trevas', 500, 75, 'EPICO', 'Drenar Alma', 2000),
-    ('Gigante de Pedra', 1500, 100, 'RARO', 'Esmagar', 3000),
-    ('Espreitador Sombrio', 800, 120, 'COMUM', 'Camuflagem das Sombras', 1500),
-    ('Serpente Venenosa', 400, 50, 'INCOMUM', 'Mordida Tóxica', 1000);
+    ('Dragão Sombrio', 1000, 150, 'lendario', 'Sopro do Caos', 5000),
+    ('Espírito das Trevas', 500, 75, 'epico', 'Drenar Alma', 2000),
+    ('Gigante de Pedra', 1500, 100, 'raro', 'Esmagar', 3000),
+    ('Espreitador Sombrio', 800, 120, 'comum', 'Camuflagem das Sombras', 1500),
+    ('Serpente Venenosa', 400, 50, 'incomum', 'Mordida Tóxica', 1000);
 
 INSERT INTO espolio_monstro (item, monstro, quantidade)
     VALUES 

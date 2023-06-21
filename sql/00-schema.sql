@@ -1,5 +1,6 @@
 CREATE TYPE ClassePersonagem AS ENUM ('mago', 'guerreiro', 'atirador', 'curandeiro');
 CREATE TYPE EspecializacaoPersonagem AS ENUM ('comerciante', 'diplomata');
+CREATE TYPE Raridade AS ENUM ('comum', 'incomum', 'raro', 'epico', 'lendario');
 
 CREATE TABLE usuario (
   nome VARCHAR(64),
@@ -58,28 +59,27 @@ CREATE TABLE Personagem (
     REFERENCES usuario(nome) ON DELETE CASCADE,
 
   --Checar se o personagem é do mesma nação do clan que ele faz parte.
-  CONSTRAINT CK_Nacao_Clan_Personagem CHECK(nacao_do_clan IS NULL OR (nacao_do_clan IS NOT NULL AND nacao_do_clan=nacao))
+  CONSTRAINT CK_Nacao_Clan_Personagem CHECK(nacao_do_clan IS NULL OR nacao_do_clan=nacao)
 
 );
 
 CREATE TABLE item (
   nome VARCHAR(64) NOT NULL,
-  descricao TEXT DEFAULT '',
-  raridade VARCHAR(16) DEFAULT 'COMUM',
+  descricao TEXT NOT NULL DEFAULT '',
+  raridade Raridade DEFAULT 'comum',
   valor_real NUMERIC NOT NULL,
   tipo VARCHAR(16),
   
   CONSTRAINT PK_ITEM PRIMARY KEY(nome),
   CONSTRAINT CK_ITEM_VALOR CHECK(valor_real >= 0),
-  CONSTRAINT CK_ITEM_TIPO CHECK(UPPER(tipo) IN ('EQUIPAMENTO', 'CONSUMIVEL')),
-  CONSTRAINT CK_ITEM_RARIDADE CHECK(UPPER(raridade) IN ('COMUM', 'INCOMUM', 'RARO', 'EPICO', 'LENDARIO'))
+  CONSTRAINT CK_ITEM_TIPO CHECK(UPPER(tipo) IN ('EQUIPAMENTO', 'CONSUMIVEL'))
 );
 
 CREATE TABLE monstro (
   nome VARCHAR(64) NOT NULL,
   vida_maxima NUMERIC NOT NULL,
   pontos_poder NUMERIC NOT NULL,
-  raridade VARCHAR(16) DEFAULT 'COMUM',
+  raridade Raridade DEFAULT 'comum',
   habilidade VARCHAR(32) DEFAULT 'NENHUMA',
   exp_gerado NUMERIC NOT NULL,
 
@@ -87,8 +87,7 @@ CREATE TABLE monstro (
   
   CONSTRAINT CK_MONSTRO_VIDA CHECK (vida_maxima >= 0),
   CONSTRAINT CK_MONSTRO_PONTOS_PODER CHECK (pontos_poder >= 0),
-  CONSTRAINT CK_MONSTRO_EXP_GERADO CHECK (exp_gerado >= 0),
-  CONSTRAINT CK_MONSTRO_RARIDADE CHECK(UPPER(raridade) IN ('COMUM', 'INCOMUM', 'RARO', 'EPICO', 'LENDARIO'))
+  CONSTRAINT CK_MONSTRO_EXP_GERADO CHECK (exp_gerado >= 0)
 );
 
 CREATE TABLE masmorra (
@@ -279,7 +278,7 @@ CREATE TABLE Personagem_Possui_Itens(
 
   CONSTRAINT PK_Personagem_Possui_Itens PRIMARY KEY (personagem, item),
   CONSTRAINT FK_Personagem_Possui_Itens_item FOREIGN KEY (item)
-    REFERENCES item(nome),
+    REFERENCES item(nome) ON DELETE CASCADE,
   CONSTRAINT FK_Personagem_Possui_Itens_personagem FOREIGN KEY (personagem)
     REFERENCES Personagem(ID) ON DELETE CASCADE
   
@@ -294,7 +293,7 @@ CREATE TABLE Vota_Em_Alianca(
 
   CONSTRAINT PK_Vota_Em_Alianca PRIMARY KEY (personagem, nacao), 
   CONSTRAINT FK_Vota_Em_Alianca_personagem FOREIGN KEY (personagem)
-    REFERENCES Personagem(ID)
+    REFERENCES Personagem(ID) ON DELETE CASCADE
   
   --CONSTRAINT CK_Vota_Em_Alianca_diplomata CHECK ('diplomata' IN (SELECT especializacao FROM Personagem P WHERE personagem=P.ID))
 );
@@ -324,7 +323,7 @@ CREATE TABLE mensagem (
   UNIQUE(topico, criador, data_de_criacao),
   CONSTRAINT fk_mensagem_topico FOREIGN KEY(topico) REFERENCES topico(id) ON DELETE RESTRICT,
   CONSTRAINT fk_mensagem_usuario FOREIGN KEY(criador) REFERENCES usuario(nome) ON DELETE RESTRICT,
-  CONSTRAINT fk_mensagem_mensagem FOREIGN KEY(mensagem_respondida) REFERENCES mensagem(id),
+  CONSTRAINT fk_mensagem_mensagem FOREIGN KEY(mensagem_respondida) REFERENCES mensagem(id) ON DELETE SET NULL,
 
   CONSTRAINT ck_mensagem_id_mensagem_respondida CHECK ( id <> mensagem_respondida )
 );
