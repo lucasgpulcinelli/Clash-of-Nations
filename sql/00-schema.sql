@@ -1,3 +1,5 @@
+--Este script foi feito para criar as tabelas e os tipos utilizados no nosso programa.
+
 --Tipos de dados novos criados para usos específicos na base de dados, como definir uma classe do personagem
 --definir uma especialização, ou definir uma raridade.
 CREATE TYPE CLASSEPERSONAGEM AS ENUM ('MAGO', 'GUERREIRO', 'ATIRADOR', 'CURANDEIRO');

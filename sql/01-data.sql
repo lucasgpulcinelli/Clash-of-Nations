@@ -1,3 +1,5 @@
+--Este script foi feito para popular as tabelas do nosso programa.
+
 INSERT INTO usuario (nome, email, data_de_criacao, senha, moderador, aconselhador)
     VALUES
     ('angelobguido', 'angelo@gmail.com', NOW(), '123', true, NULL),
@@ -16,13 +18,15 @@ INSERT INTO Cla (nacao, nome)
     ('Principado de Astoria', 'Clã Solaris'),
     ('Principado de Astoria', 'Clã Estrelado'),
     ('Ducado de Ravenshire', 'Clã dos Corvos Negros');
-    
+
+--Como classe e especialização são ENUMS, a inserção deve ser feita seguindo a mesma forma dos valores definidos, ou seja, tudo maiúsculo. 
 INSERT INTO Personagem (nome, nacao, usuario, pontos_de_poder, classe, nacao_do_clan, nome_do_clan, especializacao)
     VALUES 
     ('Angelob', 'Ducado de Ravenshire', 'angelobguido', 50, 'CURANDEIRO', 'Ducado de Ravenshire', 'Paladinos de Montfort', 'COMERCIANTE'),
     ('Lara Power', 'Principado de Astoria', 'guilhermeb', 75, 'MAGO', 'Principado de Astoria', 'Clã Solaris', 'COMERCIANTE'),
     ('Sieg Xoxana', 'Ducado de Ravenshire', 'lucagamer', 60, 'GUERREIRO', 'Ducado de Ravenshire', 'Clã dos Corvos Negros', 'DIPLOMATA');
 
+--Na inserção da raridade é necessário que seu valor esteja em maiúscula, visto que raridade é um ENUM, logo não aceita variações.
 INSERT INTO item (nome, descricao, raridade, valor_real, tipo)
     VALUES
     ('Espada das Sombras', 'Uma espada negra com lâmina reluzente. Ela consome a luz ao seu redor, deixando uma trilha de escuridão por onde passa. Aqueles atingidos por ela têm suas energias drenadas.', 'EPICO', 20, 'EQUIPAMENTO'),
@@ -80,6 +84,7 @@ INSERT INTO monstro_masmorra (monstro, masmorra, quantidade)
     ('Dragão Sombrio', 'Covil do Dragão de Fogo', 3),
     ('Serpente Venenosa', 'Covil do Dragão de Fogo', 20);
 
+--Como dificuldade não é um ENUM e sim uma string, a inserção pode ser feita seguindo qualquer tamanho, visto que é checada a palavra toda em maiúsculo.
 INSERT INTO missao (nome, dificuldade, exp_gerado, tempo_finalizar, masmorra)
     VALUES
     ('O Tesouro das Profundezas', 'Facil', 1000, 180, 'Abismo Profundo'),
@@ -141,6 +146,7 @@ INSERT INTO topico (criador, titulo, data_de_criacao, assunto)
     ('angelobguido', 'Como obter a Armadura de fenix?', '2022-01-02 00:20:00', 'ajuda'),
     ('lucagamer', 'Como participar de um clã?', '2021-12-03 00:20:00', 'ajuda');
 
+--As primeiras mensagens em um fórum não respondem nenhuma outra, logo foi inserido um valor NULL.
 INSERT INTO mensagem (topico, criador, data_de_criacao, mensagem_respondida, conteudo)
     VALUES 
     (1, 'angelobguido', '2022-01-02 00:20:00', NULL, 'Como eu obtenho a lendária armadura de fenix??'),
