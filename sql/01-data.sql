@@ -2,9 +2,9 @@
 
 INSERT INTO usuario (nome, email, data_de_criacao, senha, moderador, aconselhador)
     VALUES
-    ('angelobguido', 'angelo@gmail.com', NOW(), '123', true, NULL),
-    ('guilhermeb', 'gui@gmail.com', NOW(), '1234', false, 'angelobguido'),
-    ('lucagamer', 'lucas@gmail.com', NOW(), '1ab', true, NULL);
+    ('angelobguido', 'angelo@gmail.com', NOW(), crypt('123', gen_salt('bf', 8)), true, NULL),
+    ('guilhermeb', 'gui@gmail.com', NOW(), crypt('1234', gen_salt('bf', 8)), false, 'angelobguido'),
+    ('lucagamer', 'lucas@gmail.com', NOW(), crypt('1ab', gen_salt('bf', 8)), true, NULL);
 
 INSERT INTO Nacao (nome)
     VALUES
@@ -37,8 +37,8 @@ INSERT INTO item (nome, descricao, raridade, valor_real, tipo)
 
 INSERT INTO consumivel (item, tempo_duracao)
     VALUES 
-    ('Pergaminho de Cura', 30),
-    ('Poção de Invisibilidade', 60);
+    ('Pergaminho de Cura', INTERVAL '30s'),
+    ('Poção de Invisibilidade', INTERVAL '60s');
 
 INSERT INTO efeito_consumivel (consumivel, nome)
     VALUES
@@ -87,10 +87,10 @@ INSERT INTO monstro_masmorra (monstro, masmorra, quantidade)
 --Como dificuldade não é um ENUM e sim uma string, a inserção pode ser feita seguindo qualquer tamanho, visto que é checada a palavra toda em maiúsculo.
 INSERT INTO missao (nome, dificuldade, exp_gerado, tempo_finalizar, masmorra)
     VALUES
-    ('O Tesouro das Profundezas', 'Facil', 1000, 180, 'Abismo Profundo'),
-    ('O Segredo dos Espíritos Perdidos', 'MediA', 2500, 240, 'Cripta das Almas Perdidas'),
-    ('A Ira do Dragão Flamejante', 'DIFicil', 5000, 200, 'Covil do Dragão de Fogo'),
-    ('A Provação do Desafiante', 'ImpossIVEL', 10000, 40, 'Abismo Profundo');
+    ('O Tesouro das Profundezas', 'Facil', 1000, INTERVAL '180s', 'Abismo Profundo'),
+    ('O Segredo dos Espíritos Perdidos', 'MediA', 2500, INTERVAL '240s', 'Cripta das Almas Perdidas'),
+    ('A Ira do Dragão Flamejante', 'DIFicil', 5000, INTERVAL '200s', 'Covil do Dragão de Fogo'),
+    ('A Provação do Desafiante', 'ImpossIVEL', 10000, INTERVAL '40s', 'Abismo Profundo');
 
 INSERT INTO participacao_missao (missao, nacao, cla, data_termino, finalizou)
     VALUES
