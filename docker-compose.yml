@@ -24,6 +24,8 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      - POSTGRES_URL=db
     networks:
       - app
     depends_on:

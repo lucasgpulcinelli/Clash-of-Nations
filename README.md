@@ -3,7 +3,7 @@ A basic implementation of an RPG game database using postgreSQL and python
 
 ## Steps to run the application
 - install docker and docker-compose
-- populate a `.env` file with POSTGRES\_USER, POSTGRES\_PASSWORD and POSTGRES_URL (the last one should be 'db' when using docker-compose or 'localhost' during development)
+- populate a `.env` file with POSTGRES\_USER and POSTGRES\_PASSWORD
 - `docker-compose up -d` to start the application
 - access [http://localhost:8080](http://localhost:8080) to see the application working!
 - when done, use `docker-compose down` to stop the application and delete everything in the database. If it is necessary to retain data between shutdowns, see [this file](docker-compose.yml) to setup persistency.
