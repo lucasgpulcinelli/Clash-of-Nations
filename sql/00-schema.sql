@@ -1,5 +1,7 @@
 --Este script foi feito para criar as tabelas e os tipos utilizados no nosso programa.
 
+CREATE EXTENSION pgcrypto;
+
 --Tipos de dados novos criados para usos específicos na base de dados, como definir uma classe do personagem
 --definir uma especialização, ou definir uma raridade.
 CREATE TYPE CLASSEPERSONAGEM AS ENUM ('MAGO', 'GUERREIRO', 'ATIRADOR', 'CURANDEIRO');
@@ -10,7 +12,7 @@ CREATE TABLE USUARIO (
   NOME VARCHAR(64),
   EMAIL VARCHAR(64) NOT NULL,
   DATA_DE_CRIACAO TIMESTAMP NOT NULL DEFAULT NOW(), --Timestamp utilizado para armazenar momento exato da criação.
-  SENHA VARCHAR(64) NOT NULL,
+  SENHA CHAR(60) NOT NULL, -- A senha precisa ter exatamente 60 caracteres porque ela vai estar criptografada usando crypt() com salt do tipo 'bf'
   MODERADOR BOOLEAN NOT NULL DEFAULT FALSE,
   ACONSELHADOR VARCHAR(64),
 

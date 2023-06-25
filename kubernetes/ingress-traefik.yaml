@@ -1,0 +1,28 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: clashon-stripprefix
+  namespace: clash-of-nations
+spec:
+  stripPrefix:
+    prefixes:
+      - /
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: clashon
+  namespace: clash-of-nations
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: PathPrefix(`/`)
+      services:
+      - kind: Service
+        name: clashon
+        port: 80
+      middlewares:
+        - name: clashon-stripprefix

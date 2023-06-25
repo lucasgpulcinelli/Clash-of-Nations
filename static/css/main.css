@@ -1,0 +1,36 @@
+
+body{
+    background-size:cover;
+    background-repeat: no-repeat;
+    background-position: top;
+    font-family: 'Roboto', sans-serif;
+}
+
+h1{
+    font-family: 'MedievalSharp', cursive;
+}
+.linkItem{
+    background-color:#e5e5e5;
+    opacity: 85%;
+    max-width:800px;
+    border: solid 2px whitesmoke;
+    text-decoration: none;
+    color:#2E6E65;
+}
+
+.linkItem:hover { 
+    background-color: #e5e5e5;
+    opacity: 100%;
+}
+
+.input-field{
+    max-width: 500px;
+}
+
+.accordion {
+	--bs-accordion-btn-color: #f8f9fa;
+	--bs-accordion-btn-bg: #212529;
+	--bs-accordion-active-color: #f8f9fa;
+	--bs-accordion-active-bg: #212529;
+}
+
