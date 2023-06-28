@@ -89,3 +89,46 @@ def register():
 
     # the user is registred! The main html page should redirect it to log in
     return flask.Response(status=201)
+
+@api_bp.route('/create', methods=['POST'])
+def create():
+    '''
+    create creates new characters in the database.
+    The form must contain at least name, power, class and nation.
+    '''
+
+    # get form data
+    User = flask.request.form.get('user')
+    Name = flask.request.form.get('name')
+    Power = flask.request.form.get('power')
+    Class = flask.request.form.get('class')
+    Nation = flask.request.form.get('nation')
+    Nation_clan = flask.request.form.get('nation_clan')
+    Specialization = flask.request.form.get('specialization')
+    if Name is None or Power is None or Class is None or Nation is None:
+        return flask.Response('Bad Request', 400)
+    if Nation_clan is None:
+        Nation_clan = ["NULL","NULL"]
+    if Specialization is None:
+        Specialization = "NULL"
+
+    # try to add that user, if any error occurs, send a client error response
+    statement = '''
+      INSERT INTO Personagem (nome, nacao, usuario, pontos_de_poder, classe, nacao_do_clan, nome_do_clan, especializacao)
+      (%s, %s, %s, %s, %s, %s, %s, %s)
+    '''
+    try:
+        db.query(statement, [Name, Nation, User,Power,Class,Nation_clan[0],Nation_clan[1],Specialization])
+    except db.Error as e:
+        if type(e) == dberr.UniqueViolation:
+            text = 'Personagem já está cadastrado'
+        elif type(e) == dberr.StringDataRightTruncation:
+            text = 'Campo de texto muito grande, são aceitos até 50 caracteres'
+        else:
+            # catch-all if the error is uncommon
+            text = f'Um erro inesperado ocorreu: {type(e).__name__}: {e}'
+
+        return flask.Response(f'{text}', 409)
+
+    # the user is registred! The main html page should redirect it to log in
+    return flask.Response(status=201)
