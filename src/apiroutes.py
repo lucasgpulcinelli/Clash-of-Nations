@@ -105,17 +105,19 @@ def create():
     Nation = flask.request.form.get('nation')
     Nation_clan = flask.request.form.get('nation_clan')
     Specialization = flask.request.form.get('specialization')
-    if Name is None or Power is None or Class is None or Nation is None:
+    if User is None or Name is None or Power is None or Class is None or Nation is None:
         return flask.Response('Bad Request', 400)
     if Nation_clan is None:
-        Nation_clan = ["NULL","NULL"]
+        Nation_clan = [None,None]
+    else:
+        Nation_clan = Nation_clan.split(',')
     if Specialization is None:
-        Specialization = "NULL"
+        Specialization = None
 
     # try to add that user, if any error occurs, send a client error response
     statement = '''
       INSERT INTO Personagem (nome, nacao, usuario, pontos_de_poder, classe, nacao_do_clan, nome_do_clan, especializacao)
-      (%s, %s, %s, %s, %s, %s, %s, %s)
+      VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     '''
     try:
         db.query(statement, [Name, Nation, User,Power,Class,Nation_clan[0],Nation_clan[1],Specialization])
