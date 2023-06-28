@@ -4,7 +4,7 @@ import psycopg2.errors as dberr
 
 # get the database helper functions and session dictionary
 import db
-import session
+from session import sessions
 
 # generate a blueprint: a variable we can add routes and can be imported by the
 # main app
@@ -46,7 +46,7 @@ def login():
     # duplicate... but it's close enough for our uses, considering that it's
     # just a session id that in practice would be temporary
     sid = uuid.uuid4().hex
-    session.sessions[sid] = username
+    sessions[sid] = username
 
     resp = flask.Response(status=201)
     resp.set_cookie('sid', sid)
@@ -90,6 +90,7 @@ def register():
     # the user is registred! The main html page should redirect it to log in
     return flask.Response(status=201)
 
+
 @api_bp.route('/create', methods=['POST'])
 def create():
     '''
@@ -97,8 +98,13 @@ def create():
     The form must contain at least name, power, class and nation.
     '''
 
+    sid = flask.request.cookies.get('sid')
+    if not sid:
+        return flask.Response("Unauthorized", 401)
+
+    User = sessions[sid]
+
     # get form data
-    User = flask.request.form.get('user')
     Name = flask.request.form.get('name')
     Power = flask.request.form.get('power')
     Class = flask.request.form.get('class')
@@ -108,7 +114,7 @@ def create():
     if User is None or Name is None or Power is None or Class is None or Nation is None:
         return flask.Response('Bad Request', 400)
     if Nation_clan is None:
-        Nation_clan = [None,None]
+        Nation_clan = [None, None]
     else:
         Nation_clan = Nation_clan.split(',')
     if Specialization is None:
@@ -120,7 +126,8 @@ def create():
       VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     '''
     try:
-        db.query(statement, [Name, Nation, User,Power,Class,Nation_clan[0],Nation_clan[1],Specialization])
+        db.query(statement, [Name, Nation, User, Power, Class,
+                 Nation_clan[0], Nation_clan[1], Specialization])
     except db.Error as e:
         if type(e) == dberr.UniqueViolation:
             text = 'Personagem já está cadastrado'
