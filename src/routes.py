@@ -71,7 +71,7 @@ def char_create():
     queryNation = '''
       SELECT nome
       FROM nacao
-      ORDER BY nacao ASC
+      ORDER BY nome ASC
     '''
 
     try:
