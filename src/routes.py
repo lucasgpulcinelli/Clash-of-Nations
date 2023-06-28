@@ -60,6 +60,42 @@ def user_hub():
                                  characters=characters)
 
 
+@app.route('/charcreate.html')
+def char_create():
+    sid = flask.request.cookies.get('sid')
+    if not sid:
+        return flask.redirect('/login.html')
+
+    user = sessions[sid]
+
+    queryNation = '''
+      SELECT nome
+      FROM nacao
+      ORDER BY nome ASC
+    '''
+
+    try:
+        nations = db.query(queryNation,[], db.every)
+    except db.Error as e:
+        return flask.render_template('server_error.html',
+                                     errtype=type(e).__name__, err=e), 500
+
+    queryNationCla = '''
+      SELECT nacao,nome
+      FROM cla
+      ORDER BY nacao ASC
+    '''
+
+    try:
+        nationsAndClans = db.query(queryNationCla,[], db.every)
+    except db.Error as e:
+        return flask.render_template('server_error.html',
+                                     errtype=type(e).__name__, err=e), 500
+
+    return flask.render_template('charcreate.html', user=user,
+                nationsAndClans=nationsAndClans,nations=nations)
+
+
 @app.route('/charhub.html')
 def char_hub():
     sid = flask.request.cookies.get('sid')
