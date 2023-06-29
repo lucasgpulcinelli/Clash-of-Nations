@@ -1,5 +1,5 @@
 -- Pega todos os consumiveis de um determinado personagem e pega o tempo total de duração de todos eles separando por raridade 
-SELECT I.RARIDADE, SUM(C.TEMPO_DURACAO*PPI.QUANTIDADE)
+SELECT I.RARIDADE, SUM(C.TEMPO_DURACAO*PPI.QUANTIDADE) AS TEMPO_TOTAL
 FROM item I 
     JOIN PERSONAGEM_POSSUI_ITENS PPI
     ON I.NOME = PPI.ITEM
@@ -11,44 +11,32 @@ GROUP BY I.RARIDADE;
 
 
 -- Pega a soma de todos monstros e de todos os espólios de monstros dropados em uma determinada masmorra
-SELECT SUM(MM.QUANTIDADE), SUM(EM.QUANTIDADE*MM.QUANTIDADE)
+SELECT M.NOME, SUM(MM.QUANTIDADE) AS QTT_MONSTRO, SUM(EM.QUANTIDADE*MM.QUANTIDADE) AS QTT_ESPOLIO
 FROM MASMORRA M
     JOIN MONSTRO_MASMORRA MM
     ON M.NOME = MM.MASMORRA
 
     JOIN ESPOLIO_MONSTRO EM
     ON MM.MONSTRO = EM.MONSTRO
-WHERE MASMORRA = 'Abismo Profundo';
+GROUP BY M.NOME;
+-- HAVING
+
+--Pega a média das curtidas das mensagens de cada usuário
+SELECT U.NOME, AVG(M.NUMERO_DE_CURTIDAS) AS MEDIA_CURTIDAS
+FROM USUARIO U
+    LEFT JOIN MENSAGEM M
+    ON U.NOME = M.CRIADOR
+GROUP BY U.NOME;
 
 
--- Pega a média das curtidas de todas mensagens de um determinado usuário em cada mês, excluindo as mensagens que tem 0 curtidas
-SELECT EXTRACT(MONTH FROM M.DATA_DE_CRIACAO), AVG(M.NUMERO_DE_CURTIDAS)
-FROM TOPICO T JOIN MENSAGEM M
-    ON T.ID = M.TOPICO
-WHERE M.CRIADOR = 'angelobguido' AND M.NUMERO_DE_CURTIDAS > 0
-GROUP BY EXTRACT(MONTH FROM M.DATA_DE_CRIACAO);
+-- Buscar por todas as masmorras que o clã do personagem finalizou e a quantidade de vezes que isso aconteceu. Visto que duas missões diferentes podem ir para a mesma masmorra. E na mesma tabela, mostrar quantas missões existem com aquela masmorra. Desta forma a gente pode ver se o clã já fez tudo que podia ser feito com a masmorra.
 
-
--- Pega a média do valor de cada equipamento doado a uma comunidade determinada
-SELECT ED.NOME_DO_EQUIPAMENTO, AVG(DC.VALOR)
-FROM COMUNIDADE_CARENTE CC 
-    JOIN DOACAO_PARA_COMUNIDADE DC
-    ON CC.NOME = DC.COMUNIDADE
-
-    JOIN EQUIPAMENTO_DOADO ED
-    ON ED.USUARIO = DC.USUARIO AND ED.COMUNIDADE = DC.COMUNIDADE AND ED.DATA = DC.DATA
-WHERE CC.NOME = 'Comunidade Esperança'
-GROUP BY ED.NOME_DO_EQUIPAMENTO;
 
 
 -- Pega o nome dos personagens que possuem os memos itens que o personagem 'Angelob' DIVISAO RELACIONAL
 SELECT P.NOME
 FROM PERSONAGEM P 
-    JOIN PERSONAGEM_POSSUI_ITENS PPI
-    ON P.ID = PPI.PERSONAGEM
-WHERE PPI.ITEM = 'Armadura da Fênix' AND
-NOT EXISTS (
-
+WHERE NOT EXISTS (
     (SELECT PPI1.ITEM
     FROM PERSONAGEM P1 JOIN PERSONAGEM_POSSUI_ITENS PPI1
     ON PPI1.PERSONAGEM = P1.ID
