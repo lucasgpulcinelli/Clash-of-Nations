@@ -10,16 +10,19 @@ WHERE PPI.PERSONAGEM = 2
 GROUP BY I.RARIDADE;
 
 
--- Pega a soma de todos monstros e de todos os espólios de monstros dropados em uma determinada masmorra
-SELECT M.NOME, SUM(MM.QUANTIDADE) AS QTT_MONSTRO, SUM(EM.QUANTIDADE*MM.QUANTIDADE) AS QTT_ESPOLIO
-FROM MASMORRA M
+-- Pega a soma de todos monstros e de todos os espólios de monstros dropados para cada masmorra que
+-- possui 5 missoes relacionas
+SELECT MM.MASMORRA, SUM(MM.QUANTIDADE), SUM(EM.QUANTIDADE*MM.QUANTIDADE)
+FROM MISSAO MS
+    JOIN MASMORRA M
+    ON MS.MASMORRA = M.NOME
     JOIN MONSTRO_MASMORRA MM
     ON M.NOME = MM.MASMORRA
 
     JOIN ESPOLIO_MONSTRO EM
     ON MM.MONSTRO = EM.MONSTRO
-GROUP BY M.NOME;
--- HAVING
+GROUP BY MM.MASMORRA
+HAVING COUNT(*) >= 5;
 
 --Pega a média das curtidas das mensagens de cada usuário
 SELECT U.NOME, AVG(M.NUMERO_DE_CURTIDAS) AS MEDIA_CURTIDAS
