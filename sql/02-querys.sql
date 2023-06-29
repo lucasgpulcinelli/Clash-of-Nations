@@ -33,7 +33,12 @@ GROUP BY U.NOME;
 
 
 -- Buscar por todas as masmorras que o clã do personagem finalizou e a quantidade de vezes que isso aconteceu. Visto que duas missões diferentes podem ir para a mesma masmorra. E na mesma tabela, mostrar quantas missões existem com aquela masmorra. Desta forma a gente pode ver se o clã já fez tudo que podia ser feito com a masmorra.
-
+SELECT M.MASMORRA, COUNT(*) AS TOTAL_MISSOES, SUM(CASE WHEN PM.FINALIZOU = TRUE THEN 1 ELSE 0 END) AS MISSOES_FINALIZADAS
+FROM PARTICIPACAO_MISSAO PM 
+    JOIN MISSAO M
+    ON PM.MISSAO = M.NOME
+WHERE PM.CLA = 'Paladinos de Montfort'
+GROUP BY M.MASMORRA;
 
 
 -- Pega o nome dos personagens que possuem os memos itens que o personagem 'Angelob' DIVISAO RELACIONAL
