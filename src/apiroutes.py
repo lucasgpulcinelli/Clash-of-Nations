@@ -141,3 +141,14 @@ def create():
 
     # the user is registred! The main html page should redirect it to log in
     return flask.Response(status=201)
+
+
+@api_bp.route('logout')
+def logout():
+    res = flask.redirect('/index.html')
+
+    if flask.request.cookies.get('sid') is not None:
+        sessions[flask.request.cookies['sid']] = None
+        res.delete_cookie('sid')
+
+    return res
