@@ -1,5 +1,3 @@
---SELECT * FROM MENSAGEM;
-
 -- Pega todos os consumiveis de um determinado personagem e pega o tempo total de duração de todos eles separando por raridade 
 SELECT I.RARIDADE, SUM(C.TEMPO_DURACAO*PPI.QUANTIDADE)
 FROM item I 
@@ -30,6 +28,7 @@ FROM TOPICO T JOIN MENSAGEM M
 WHERE M.CRIADOR = 'angelobguido' AND M.NUMERO_DE_CURTIDAS > 0
 GROUP BY EXTRACT(MONTH FROM M.DATA_DE_CRIACAO);
 
+
 -- Pega a média do valor de cada equipamento doado a uma comunidade determinada
 SELECT ED.NOME_DO_EQUIPAMENTO, AVG(DC.VALOR)
 FROM COMUNIDADE_CARENTE CC 
@@ -41,3 +40,23 @@ FROM COMUNIDADE_CARENTE CC
 WHERE CC.NOME = 'Comunidade Esperança'
 GROUP BY ED.NOME_DO_EQUIPAMENTO;
 
+
+-- Pega o nome dos personagens que possuem os memos itens que o personagem 'Angelob' DIVISAO RELACIONAL
+SELECT P.NOME
+FROM PERSONAGEM P 
+    JOIN PERSONAGEM_POSSUI_ITENS PPI
+    ON P.ID = PPI.PERSONAGEM
+WHERE PPI.ITEM = 'Armadura da Fênix' AND
+NOT EXISTS (
+
+    (SELECT PPI1.ITEM
+    FROM PERSONAGEM P1 JOIN PERSONAGEM_POSSUI_ITENS PPI1
+    ON PPI1.PERSONAGEM = P1.ID
+    WHERE P1.NOME='Angelob')
+
+    EXCEPT
+
+    (SELECT PPI2.ITEM
+    FROM PERSONAGEM_POSSUI_ITENS PPI2
+    WHERE PPI2.PERSONAGEM = P.ID)
+);
