@@ -20,6 +20,7 @@ def root():
 @app.route('/login.html')
 def loginPage():
     if flask.request.cookies.get('sid'):
+        # if the user is already logged in, just redirect it
         return flask.redirect('/userhub.html')
     return app.send_static_file('login.html')
 
@@ -27,6 +28,7 @@ def loginPage():
 @app.route('/register.html')
 def registerPage():
     if flask.request.cookies.get('sid'):
+        # if the user is already logged in, just redirect it
         return flask.redirect('/userhub.html')
     return flask.render_template('register.html')
 
@@ -35,12 +37,15 @@ def registerPage():
 def user_hub():
     sid = flask.request.cookies.get('sid')
     if not sid:
+        # if the user is not logged in, we need to authenticate first
         return flask.redirect('/login.html')
     if sessions.get(sid) is None:
+        # if the user is logged in with an invalid cookie, delete it and redirect
         resp = flask.redirect('/login.html')
         resp.delete_cookie('sid')
         return resp
 
+    # get the username from the cookie
     user = sessions[sid]
 
     query = '''
@@ -51,11 +56,13 @@ def user_hub():
     '''
 
     try:
+        # get all it's characters
         characters = db.query(query, [user], db.every)
     except db.Error as e:
         return flask.render_template('server_error.html',
                                      errtype=type(e).__name__, err=e), 500
 
+    # render the page with the database result if everything went right
     return flask.render_template('userhub.html', user=user,
                                  characters=characters)
 
@@ -63,9 +70,11 @@ def user_hub():
 @app.route('/charcreate.html')
 def char_create():
     sid = flask.request.cookies.get('sid')
-    if not sid:
+    if (not sid) or sessions.get(sid) is None:
+        # if the user is not logged in, we need to authenticate first
         return flask.redirect('/login.html')
 
+    # get the username from the cookie
     user = sessions[sid]
 
     queryNation = '''
@@ -75,7 +84,8 @@ def char_create():
     '''
 
     try:
-        nations = db.query(queryNation,[], db.every)
+        # get all nations
+        nations = db.query(queryNation, [], db.every)
     except db.Error as e:
         return flask.render_template('server_error.html',
                                      errtype=type(e).__name__, err=e), 500
@@ -87,25 +97,31 @@ def char_create():
     '''
 
     try:
-        nationsAndClans = db.query(queryNationCla,[], db.every)
+        # get all clans
+        nationsAndClans = db.query(queryNationCla, [], db.every)
     except db.Error as e:
         return flask.render_template('server_error.html',
                                      errtype=type(e).__name__, err=e), 500
 
+    # render the creation page with the correct information if no errors happend
     return flask.render_template('charcreate.html', user=user,
-                nationsAndClans=nationsAndClans,nations=nations)
+                                 nationsAndClans=nationsAndClans, nations=nations)
 
 
 @app.route('/charhub.html')
 def char_hub():
     sid = flask.request.cookies.get('sid')
     if (not sid) or sessions.get(sid) is None:
+        # if the user is not logged in, redirect it
         return flask.redirect('/login.html')
 
+    # get the username from the cookie
     user = sessions[sid]
 
+    # the character that needs to be displayed has it's id encoded as a URL argument
     character = flask.request.args.get('char')
     if character is None:
+        # if no character was provided, go back to the user page to choose one
         return flask.redirect('/userhub.html')
 
     basicq = '''
@@ -115,6 +131,7 @@ def char_hub():
       WHERE usuario = %s AND ID = %s
     '''
     try:
+        # get the general data for that character
         basic_data = db.query(basicq, [user, character], db.one)
     except db.Error as e:
         return flask.render_template('server_error.html',
@@ -132,12 +149,15 @@ def char_hub():
       ORDER BY ppi.equipado DESC
     '''
     try:
+        # get all items for that character, and, if they are equipments, get
+        # some special info too
         items = db.query(itemsq, [character], db.every)
     except db.Error as e:
         return flask.render_template('server_error.html',
                                      errtype=type(e).__name__, err=e), 500
 
     if basic_data[8] == None:
+        # if the character is not in a clan, we don't even need to do the last query
         clan_friends = None
     else:
         clanq = '''
@@ -146,11 +166,13 @@ def char_hub():
           WHERE p.nacao_do_clan = %s AND p.nome_do_clan = %s AND p.ID != %s
         '''
         try:
+            # get all characters and their owners that are in the same clan as us
             clan_friends = db.query(clanq, [basic_data[1], basic_data[8],
                                             character], db.every)
         except db.Error as e:
             return flask.render_template('server_error.html',
                                          errtype=type(e).__name__, err=e), 500
 
+    # if everything went right, we can render the final character page
     return flask.render_template('charhub.html', basic_data=basic_data,
                                  items=items, clan_friends=clan_friends)

@@ -73,14 +73,14 @@ def register():
       VALUES (%s, %s, crypt(%s, gen_salt('bf', 8)))
     '''
     try:
-        if len(password) > 50:
+        if len(password) > 64:
             raise dberr.StringDataRightTruncation
         db.query(statement, [username, email, password])
     except db.Error as e:
         if type(e) == dberr.UniqueViolation:
             text = 'Usuário ou email já estão cadastrados'
         elif type(e) == dberr.StringDataRightTruncation:
-            text = 'Campo de texto muito grande, são aceitos até 50 caracteres'
+            text = 'Campo de texto muito grande, são aceitos até 64 caracteres'
         else:
             # catch-all if the error is uncommon
             text = f'Um erro inesperado ocorreu: {type(e).__name__}: {e}'
@@ -145,6 +145,11 @@ def create():
 
 @api_bp.route('logout')
 def logout():
+    '''
+    logout removes the session cookie, allowing a person to login as another
+    user or register a new one
+    '''
+
     res = flask.redirect('/index.html')
 
     if flask.request.cookies.get('sid') is not None:

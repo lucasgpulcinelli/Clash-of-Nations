@@ -25,7 +25,7 @@ except Exception as e:
 # a simple error alias to simplify imports
 Error = psycopg2.Error
 
-# the three functions below are to be used as parameters in query as
+# the four functions below are to be used as parameters in query as
 # quantityLambda
 
 
@@ -50,9 +50,9 @@ def query(query, variables=None, quantityLambda=no_read, connection=None):
     query executes a query in the database and returns a list of tuples, where
     each entry of the list is a database row, and each entry in the tuple is a
     column. The query is the query string itself, quantityLambda is one of
-    db.every, db.one or db.get, ment to select how many results are wanted.
-    Optionally, a list of variables for the query can be passed, as well as an
-    existing connection.
+    db.every, db.one, db.get or db.no_read, ment to select how many results are
+    wanted. Optionally, a list of variables for the query can be passed, as well
+    as an existing connection.
     '''
 
     close = False
